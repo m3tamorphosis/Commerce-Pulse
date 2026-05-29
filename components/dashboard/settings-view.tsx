@@ -8,7 +8,7 @@ import { PlatformStatusPill } from "@/components/shared/platform-status-pill";
 import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
 
 export function SettingsView() {
-  const { data, isLoading } = useDashboardQuery();
+  const { data, isLoading, isFetching, refetch } = useDashboardQuery();
 
   return (
     <div className="space-y-6">
@@ -29,7 +29,12 @@ export function SettingsView() {
             {data ? (
               <>
                 <PlatformStatusPill platform="shopify" health={data.platforms.shopify} />
-                <PlatformStatusPill platform="tiktok" health={data.platforms.tiktok} />
+                <PlatformStatusPill
+                  platform="tiktok"
+                  health={data.platforms.tiktok}
+                  isRetrying={isFetching}
+                  onRetry={() => void refetch()}
+                />
               </>
             ) : (
               <>

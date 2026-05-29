@@ -29,7 +29,12 @@ export function DashboardOverview() {
           {data ? (
             <>
               <PlatformStatusPill platform="shopify" health={data.platforms.shopify} />
-              <PlatformStatusPill platform="tiktok" health={data.platforms.tiktok} />
+              <PlatformStatusPill
+                platform="tiktok"
+                health={data.platforms.tiktok}
+                isRetrying={isFetching}
+                onRetry={() => void refetch()}
+              />
             </>
           ) : (
             <>

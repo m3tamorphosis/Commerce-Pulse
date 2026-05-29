@@ -8,7 +8,7 @@ import { KpiGrid } from "@/components/dashboard/kpi-grid";
 import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
 
 export function AnalyticsView() {
-  const { data, isLoading, refetch } = useDashboardQuery();
+  const { data, isLoading, isFetching, refetch } = useDashboardQuery();
 
   return (
     <div className="space-y-6">
@@ -22,7 +22,12 @@ export function AnalyticsView() {
             {data ? (
               <>
                 <PlatformStatusPill platform="shopify" health={data.platforms.shopify} />
-                <PlatformStatusPill platform="tiktok" health={data.platforms.tiktok} />
+                <PlatformStatusPill
+                  platform="tiktok"
+                  health={data.platforms.tiktok}
+                  isRetrying={isFetching}
+                  onRetry={() => void refetch()}
+                />
               </>
             ) : (
               <>

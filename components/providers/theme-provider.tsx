@@ -12,13 +12,16 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") {
+      return "light";
+    }
 
-  useEffect(() => {
     const stored = window.localStorage.getItem("commerce-pulse-theme");
     const preferredDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setTheme(stored === "dark" || (!stored && preferredDark) ? "dark" : "light");
-  }, []);
+
+    return stored === "dark" || (!stored && preferredDark) ? "dark" : "light";
+  });
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
