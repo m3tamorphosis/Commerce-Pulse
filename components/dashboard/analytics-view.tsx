@@ -12,7 +12,8 @@ export function AnalyticsView() {
 
   return (
     <div className="space-y-6">
-      <PageHeading
+      <div className="motion-safe:animate-section-in">
+        <PageHeading
         eyebrow="Cross-channel performance"
         title="Analytics"
         description="Compare Shopify and TikTok Shop revenue, orders, conversion behavior, and sync confidence from one view."
@@ -31,9 +32,14 @@ export function AnalyticsView() {
             )}
           </div>
         }
-      />
-      <KpiGrid metrics={data?.metrics} isLoading={isLoading} />
-      <SalesAnalytics data={data} isLoading={isLoading} onRetry={() => void refetch()} />
+        />
+      </div>
+      <div className="motion-safe:animate-section-in" style={{ animationDelay: "70ms" }}>
+        <KpiGrid metrics={data?.metrics} isLoading={isLoading} />
+      </div>
+      <div className="motion-safe:animate-section-in" style={{ animationDelay: "120ms" }}>
+        <SalesAnalytics data={data} isLoading={isLoading} onRetry={() => void refetch()} />
+      </div>
     </div>
   );
 }

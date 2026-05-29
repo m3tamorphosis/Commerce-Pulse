@@ -23,12 +23,14 @@ export function OrdersView() {
 
   return (
     <div className="space-y-6">
-      <PageHeading
-        eyebrow="Order activity"
-        title="Orders"
-        description="Track order volume by platform while preserving visibility when TikTok order data is delayed or cached."
-      />
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="motion-safe:animate-section-in">
+        <PageHeading
+          eyebrow="Order activity"
+          title="Orders"
+          description="Track order volume by platform while preserving visibility when TikTok order data is delayed or cached."
+        />
+      </div>
+      <div className="motion-safe:animate-section-in grid gap-4 md:grid-cols-3" style={{ animationDelay: "70ms" }}>
         <Card>
           <CardHeader>
             <CardTitle>Total Orders</CardTitle>
@@ -57,6 +59,7 @@ export function OrdersView() {
           </CardContent>
         </Card>
       </div>
+      <div className="motion-safe:animate-section-in" style={{ animationDelay: "120ms" }}>
       <Card>
         <CardHeader>
           <CardTitle>Daily Order Breakdown</CardTitle>
@@ -100,6 +103,7 @@ export function OrdersView() {
           ) : null}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

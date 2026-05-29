@@ -9,12 +9,16 @@ export function InventoryView() {
 
   return (
     <div className="space-y-6">
-      <PageHeading
-        eyebrow="Inventory operations"
-        title="Inventory"
-        description="Monitor stock levels, platform mismatches, delayed syncs, and low inventory risk without blocking Shopify operations."
-      />
-      <InventoryTable items={data?.inventory} isLoading={isLoading} />
+      <div className="motion-safe:animate-section-in">
+        <PageHeading
+          eyebrow="Inventory operations"
+          title="Inventory"
+          description="Monitor stock levels, platform mismatches, delayed syncs, and low inventory risk without blocking Shopify operations."
+        />
+      </div>
+      <div className="motion-safe:animate-section-in" style={{ animationDelay: "80ms" }}>
+        <InventoryTable items={data?.inventory} isLoading={isLoading} />
+      </div>
     </div>
   );
 }

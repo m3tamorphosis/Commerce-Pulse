@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   AlertTriangle,
   BarChart3,
@@ -34,6 +35,11 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed, mobileOpen, onCollapse, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPendingHref(null);
+  }, [pathname]);
 
   return (
     <>
@@ -70,24 +76,28 @@ export function Sidebar({ collapsed, mobileOpen, onCollapse, onMobileClose }: Si
           </div>
           <nav className="flex-1 space-y-1 p-3">
             {items.map((item) => {
-              const active =
-                item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+              const activePath = pendingHref ?? pathname;
+              const active = item.href === "/" ? activePath === "/" : activePath.startsWith(item.href);
 
               return (
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={onMobileClose}
+                prefetch
+                onClick={() => {
+                  setPendingHref(item.href);
+                  onMobileClose();
+                }}
                 className={cn(
                   "flex h-10 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium transition duration-150 ease-out active:scale-[0.98]",
                   active
-                    ? "bg-slate-950 text-white shadow-sm dark:bg-primary dark:text-primary-foreground"
+                    ? "animate-nav-select bg-slate-950 text-white shadow-sm dark:bg-primary dark:text-primary-foreground"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
                   collapsed && "justify-center px-0"
                 )}
                 title={collapsed ? item.label : undefined}
               >
-                <item.icon className="h-4 w-4 shrink-0" />
+                <item.icon className={cn("h-4 w-4 shrink-0 transition-transform duration-150", active && "scale-110")} />
                 {!collapsed ? <span>{item.label}</span> : null}
               </Link>
               );

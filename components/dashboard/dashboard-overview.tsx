@@ -16,7 +16,7 @@ export function DashboardOverview() {
 
   return (
     <div className="space-y-6">
-      <section className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+      <section className="motion-safe:animate-section-in flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">
             Unified Analytics Command Center for Shopify & TikTok Shop
@@ -40,15 +40,17 @@ export function DashboardOverview() {
         </div>
       </section>
 
-      {data?.warnings.map((warning) => (
-        <ErrorBanner
-          key={warning}
-          title="Partial data notice"
-          description={warning}
-          actionLabel="Retry TikTok"
-          onRetry={() => void refetch()}
-        />
-      ))}
+      <div className="motion-safe:animate-section-in" style={{ animationDelay: "40ms" }}>
+        {data?.warnings.map((warning) => (
+          <ErrorBanner
+            key={warning}
+            title="Partial data notice"
+            description={warning}
+            actionLabel="Retry TikTok"
+            onRetry={() => void refetch()}
+          />
+        ))}
+      </div>
 
       {isError ? (
         <ErrorBanner
@@ -65,14 +67,18 @@ export function DashboardOverview() {
         </Button>
       </div>
 
-      <KpiGrid metrics={data?.metrics} isLoading={isLoading} />
+      <div className="motion-safe:animate-section-in" style={{ animationDelay: "80ms" }}>
+        <KpiGrid metrics={data?.metrics} isLoading={isLoading} />
+      </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(340px,0.7fr)]">
+      <div className="motion-safe:animate-section-in grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(340px,0.7fr)]" style={{ animationDelay: "120ms" }}>
         <SalesAnalytics data={data} isLoading={isLoading} onRetry={() => void refetch()} />
         <AlertsPanel alerts={data?.alerts} isLoading={isLoading} />
       </div>
 
-      <InventoryTable items={data?.inventory} isLoading={isLoading} />
+      <div className="motion-safe:animate-section-in" style={{ animationDelay: "160ms" }}>
+        <InventoryTable items={data?.inventory} isLoading={isLoading} />
+      </div>
     </div>
   );
 }

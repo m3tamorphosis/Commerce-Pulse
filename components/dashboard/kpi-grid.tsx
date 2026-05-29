@@ -20,9 +20,15 @@ export function KpiGrid({
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      {metrics.map((metric) => (
-        <MetricCard key={metric.id} metric={metric} />
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {metrics.map((metric, index) => (
+        <div
+          key={metric.id}
+          className="motion-safe:animate-section-in"
+          style={{ animationDelay: `${index * 45}ms` }}
+        >
+          <MetricCard metric={metric} />
+        </div>
       ))}
     </div>
   );

@@ -12,12 +12,14 @@ export function SettingsView() {
 
   return (
     <div className="space-y-6">
-      <PageHeading
-        eyebrow="Workspace configuration"
-        title="Settings"
-        description="Review store connections, sync behavior, and operational defaults for the Commerce Pulse workspace."
-      />
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(320px,0.7fr)]">
+      <div className="motion-safe:animate-section-in">
+        <PageHeading
+          eyebrow="Workspace configuration"
+          title="Settings"
+          description="Review store connections, sync behavior, and operational defaults for the Commerce Pulse workspace."
+        />
+      </div>
+      <div className="motion-safe:animate-section-in grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(320px,0.7fr)]" style={{ animationDelay: "80ms" }}>
         <Card>
           <CardHeader>
             <CardTitle>Connected Platforms</CardTitle>

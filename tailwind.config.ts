@@ -53,6 +53,19 @@ const config: Config = {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" }
         },
+        "section-in": {
+          "0%": { opacity: "0", transform: "translateY(12px) scale(0.99)" },
+          "100%": { opacity: "1", transform: "translateY(0) scale(1)" }
+        },
+        "nav-select": {
+          "0%": { transform: "scale(0.98)" },
+          "60%": { transform: "scale(1.02)" },
+          "100%": { transform: "scale(1)" }
+        },
+        "row-in": {
+          "0%": { opacity: "0", transform: "translateX(-8px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" }
+        },
         "slide-up": {
           "0%": { opacity: "0", transform: "translateY(8px)" },
           "100%": { opacity: "1", transform: "translateY(0)" }
@@ -64,7 +77,10 @@ const config: Config = {
       },
       animation: {
         "fade-in": "fade-in 180ms ease-out",
-        "page-in": "page-in 240ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "page-in": "page-in 160ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "section-in": "section-in 260ms cubic-bezier(0.16, 1, 0.3, 1) both",
+        "nav-select": "nav-select 180ms ease-out",
+        "row-in": "row-in 180ms ease-out both",
         "slide-up": "slide-up 220ms ease-out",
         "popover-in": "popover-in 140ms ease-out"
       }

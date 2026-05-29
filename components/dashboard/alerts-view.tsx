@@ -10,11 +10,13 @@ export function AlertsView() {
 
   return (
     <div className="space-y-6">
-      <PageHeading
-        eyebrow="Operational confidence"
-        title="Alerts"
-        description="Review calm, actionable platform and inventory notices scoped to the affected service."
-      />
+      <div className="motion-safe:animate-section-in">
+        <PageHeading
+          eyebrow="Operational confidence"
+          title="Alerts"
+          description="Review calm, actionable platform and inventory notices scoped to the affected service."
+        />
+      </div>
       {data?.warnings.map((warning) => (
         <ErrorBanner
           key={warning}
@@ -24,7 +26,7 @@ export function AlertsView() {
           onRetry={() => void refetch()}
         />
       ))}
-      <div className="max-w-3xl">
+      <div className="motion-safe:animate-section-in max-w-3xl" style={{ animationDelay: "90ms" }}>
         <AlertsPanel alerts={data?.alerts} isLoading={isLoading} />
       </div>
     </div>

@@ -26,6 +26,7 @@ export function InventoryTable({
   const [filter, setFilter] = useState<FilterKey>("all");
   const [sortKey, setSortKey] = useState<SortKey>("riskLevel");
   const [page, setPage] = useState(1);
+  const [animationKey, setAnimationKey] = useState(0);
   const pageSize = 5;
 
   const filtered = useMemo(() => {
@@ -92,6 +93,7 @@ export function InventoryTable({
               onClick={() => {
                 setFilter(option);
                 setPage(1);
+                setAnimationKey((value) => value + 1);
               }}
             >
               {option === "all" ? "All" : statusLabel(option)}
@@ -122,7 +124,10 @@ export function InventoryTable({
                         {["productName", "shopifyStock", "tiktokStock", "riskLevel"].includes(key) ? (
                           <button
                             className="inline-flex items-center gap-2"
-                            onClick={() => setSortKey(key as SortKey)}
+                            onClick={() => {
+                              setSortKey(key as SortKey);
+                              setAnimationKey((value) => value + 1);
+                            }}
                           >
                             {label}
                             <ArrowDownUp className="h-3.5 w-3.5" />
@@ -135,10 +140,17 @@ export function InventoryTable({
                   </tr>
                 </thead>
                 <tbody className="divide-y bg-card">
-                  {visible.map((item) => {
+                  {visible.map((item, index) => {
                     const mismatch = item.tiktokStock !== null && item.shopifyStock !== item.tiktokStock;
                     return (
-                      <tr key={item.id} className={mismatch ? "bg-red-50/50 dark:bg-red-950/35" : undefined}>
+                      <tr
+                        key={`${animationKey}-${item.id}`}
+                        className={cn(
+                          "motion-safe:animate-row-in transition-colors duration-200",
+                          mismatch ? "bg-red-50/50 dark:bg-red-950/35" : undefined
+                        )}
+                        style={{ animationDelay: `${index * 35}ms` }}
+                      >
                         <td className="px-4 py-4">
                           <div>
                             <p className="font-medium">{item.productName}</p>
@@ -180,7 +192,10 @@ export function InventoryTable({
                   variant="secondary"
                   size="sm"
                   disabled={page === 1}
-                  onClick={() => setPage((value) => Math.max(1, value - 1))}
+                  onClick={() => {
+                    setPage((value) => Math.max(1, value - 1));
+                    setAnimationKey((value) => value + 1);
+                  }}
                 >
                   Previous
                 </Button>
@@ -191,7 +206,10 @@ export function InventoryTable({
                   variant="secondary"
                   size="sm"
                   disabled={page === pageCount}
-                  onClick={() => setPage((value) => Math.min(pageCount, value + 1))}
+                  onClick={() => {
+                    setPage((value) => Math.min(pageCount, value + 1));
+                    setAnimationKey((value) => value + 1);
+                  }}
                 >
                   Next
                 </Button>
