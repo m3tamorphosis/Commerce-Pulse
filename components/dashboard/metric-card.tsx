@@ -18,7 +18,7 @@ export function MetricCard({ metric }: { metric: MetricCardData }) {
           </div>
           <StatusBadge status={metric.status} />
         </div>
-        <p className="text-sm text-muted-foreground">{metric.helper}</p>
+        <p className="text-sm leading-5 text-muted-foreground">{metric.helper}</p>
       </CardHeader>
       <CardContent>
         <div className="mb-4 flex h-10 items-end gap-1" aria-hidden>
@@ -26,22 +26,25 @@ export function MetricCard({ metric }: { metric: MetricCardData }) {
             <div
               key={`${metric.id}-${index}`}
               className={cn(
-                "w-full rounded-t bg-slate-200 dark:bg-slate-700",
+                "w-full origin-bottom rounded-t bg-slate-200 transition duration-200 hover:opacity-90 motion-safe:animate-bar-in dark:bg-slate-700",
                 metric.status === "delayed" && index > metric.series.length - 3
                   ? "bg-red-300/80 dark:bg-red-400/80"
-                  : "bg-blue-500/70 dark:bg-blue-400/80"
+                  : "bg-emerald-500/75 dark:bg-emerald-400/80"
               )}
-              style={{ height: `${Math.max(22, (point / max) * 100)}%` }}
+              style={{
+                height: `${Math.max(22, (point / max) * 100)}%`,
+                animationDelay: `${index * 35}ms`
+              }}
             />
           ))}
         </div>
         <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="rounded-lg bg-muted/60 p-3">
-            <p className="text-xs text-muted-foreground">Shopify</p>
+          <div className="rounded-lg border border-transparent bg-muted/60 p-3 transition duration-150 hover:border-border hover:bg-muted/80">
+            <p className="text-xs font-medium text-muted-foreground">Shopify</p>
             <p className="mt-1 font-semibold">{metric.contributions.shopify.label}</p>
           </div>
-          <div className="rounded-lg bg-muted/60 p-3">
-            <p className="text-xs text-muted-foreground">TikTok Shop</p>
+          <div className="rounded-lg border border-transparent bg-muted/60 p-3 transition duration-150 hover:border-border hover:bg-muted/80">
+            <p className="text-xs font-medium text-muted-foreground">TikTok Shop</p>
             <p className="mt-1 font-semibold">{metric.contributions.tiktok.label}</p>
           </div>
         </div>
@@ -49,9 +52,9 @@ export function MetricCard({ metric }: { metric: MetricCardData }) {
           {positive ? (
             <ArrowUpRight className="h-4 w-4 text-emerald-600" />
           ) : (
-            <ArrowDownRight className="h-4 w-4 text-amber-600" />
+            <ArrowDownRight className="h-4 w-4 text-red-600 dark:text-red-300" />
           )}
-          <span className={positive ? "font-medium text-emerald-700" : "font-medium text-amber-700"}>
+          <span className={positive ? "font-medium text-emerald-700" : "font-medium text-red-700 dark:text-red-200"}>
             {Math.abs(metric.trend)}%
           </span>
           <span className="text-muted-foreground">vs previous period</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { RefreshCcw } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useDashboardQuery } from "@/hooks/use-dashboard-query";
 import { Button } from "@/components/ui/button";
 import { ErrorBanner } from "@/components/shared/error-banner";
@@ -10,9 +11,27 @@ import { SalesAnalytics } from "@/components/charts/sales-analytics";
 import { InventoryTable } from "@/components/inventory/inventory-table";
 import { AlertsPanel } from "@/components/alerts/alerts-panel";
 import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
+import type { OperationalAlert } from "@/types/dashboard";
 
 export function DashboardOverview() {
   const { data, isLoading, isError, refetch, isFetching } = useDashboardQuery();
+  const router = useRouter();
+
+  const handleAlertAction = (alert: OperationalAlert) => {
+    if (alert.actionLabel?.includes("Retry")) {
+      void refetch();
+      return;
+    }
+
+    if (alert.id === "low-stock") {
+      router.push("/inventory?risk=low");
+      return;
+    }
+
+    if (alert.id === "stock-mismatch") {
+      router.push("/inventory?filter=out_of_sync");
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -78,7 +97,12 @@ export function DashboardOverview() {
 
       <div className="motion-safe:animate-section-in grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(340px,0.7fr)]" style={{ animationDelay: "120ms" }}>
         <SalesAnalytics data={data} isLoading={isLoading} onRetry={() => void refetch()} />
-        <AlertsPanel alerts={data?.alerts} isLoading={isLoading} />
+        <AlertsPanel
+          alerts={data?.alerts}
+          isLoading={isLoading}
+          isActionLoading={isFetching}
+          onAlertAction={handleAlertAction}
+        />
       </div>
 
       <div className="motion-safe:animate-section-in" style={{ animationDelay: "160ms" }}>

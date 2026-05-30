@@ -6,10 +6,14 @@ import { EmptyState } from "@/components/shared/empty-state";
 
 export function AlertsPanel({
   alerts,
-  isLoading
+  isLoading,
+  isActionLoading,
+  onAlertAction
 }: {
   alerts?: OperationalAlert[];
   isLoading: boolean;
+  isActionLoading?: boolean;
+  onAlertAction?: (alert: OperationalAlert) => void;
 }) {
   return (
     <Card>
@@ -33,7 +37,12 @@ export function AlertsPanel({
         {!isLoading && alerts?.length ? (
           <div className="space-y-3">
             {alerts.map((alert) => (
-              <AlertCard key={alert.id} alert={alert} />
+              <AlertCard
+                key={alert.id}
+                alert={alert}
+                isActionLoading={isActionLoading && alert.actionLabel?.includes("Retry")}
+                onAction={onAlertAction}
+              />
             ))}
           </div>
         ) : null}

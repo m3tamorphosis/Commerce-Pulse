@@ -4,6 +4,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { RoutePreloader } from "@/components/providers/route-preloader";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { WorkspaceProvider } from "@/components/providers/workspace-provider";
 
 export const metadata: Metadata = {
   title: "Commerce Pulse",
@@ -35,11 +36,13 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
-          <QueryProvider>
-            <RoutePreloader>
-              <AppShell>{children}</AppShell>
-            </RoutePreloader>
-          </QueryProvider>
+          <WorkspaceProvider>
+            <QueryProvider>
+              <RoutePreloader>
+                <AppShell>{children}</AppShell>
+              </RoutePreloader>
+            </QueryProvider>
+          </WorkspaceProvider>
         </ThemeProvider>
       </body>
     </html>

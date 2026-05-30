@@ -2,14 +2,141 @@ import type { DashboardResponse, PlatformStatus } from "@/types/dashboard";
 import { formatCurrency } from "@/lib/utils";
 
 interface MockOptions {
-  tiktokStatus: PlatformStatus;
+  tiktokStatus?: PlatformStatus;
+  storeId?: string;
+  dateRangeId?: string;
 }
 
 const minutesAgo = (minutes: number) => new Date(Date.now() - minutes * 60000).toISOString();
 
-export function getDashboardMock({ tiktokStatus }: MockOptions): DashboardResponse {
-  const tiktokFailed = tiktokStatus === "failed";
-  const tiktokDelayed = tiktokStatus === "delayed" || tiktokStatus === "stale" || tiktokFailed;
+const storeProfiles = {
+  manila: {
+    label: "Manila Supply Co.",
+    revenueMultiplier: 1,
+    orderMultiplier: 1,
+    defaultTiktokStatus: "delayed" as PlatformStatus,
+    conversion: { shopify: 3.7, tiktok: 2.9, total: "3.42%" },
+    inventory: { total: "91%", shopify: 96, tiktok: 84 },
+    products: [
+      "Everyday Canvas Tote",
+      "Ribbed Performance Tee",
+      "Insulated Tumbler Set",
+      "Rechargeable Desk Lamp",
+      "Travel Organizer Pouch",
+      "Matte Bottle 24oz",
+      "Bamboo Laptop Stand",
+      "Cord Organizer Kit",
+      "Mini Ring Light",
+      "Foldable Market Bag",
+      "Desk Cable Tray",
+      "Reusable Food Container",
+      "Portable Fan",
+      "Cotton Crew Socks",
+      "Slim Card Holder"
+    ]
+  },
+  luzon: {
+    label: "Luzon Home Goods",
+    revenueMultiplier: 0.72,
+    orderMultiplier: 0.78,
+    defaultTiktokStatus: "healthy" as PlatformStatus,
+    conversion: { shopify: 3.1, tiktok: 2.6, total: "2.94%" },
+    inventory: { total: "87%", shopify: 92, tiktok: 79 },
+    products: [
+      "Bamboo Storage Basket",
+      "Ceramic Dinnerware Set",
+      "Abaca Table Runner",
+      "Rattan Floor Lamp",
+      "Cotton Bath Towel Pack",
+      "Acacia Serving Tray",
+      "Capiz Shell Coasters",
+      "Woven Laundry Hamper",
+      "Linen Pillow Cover",
+      "Kitchen Spice Rack",
+      "Handwoven Placemat Set",
+      "Wooden Utensil Holder",
+      "Candle Warmer Lamp",
+      "Glass Pantry Jar Set",
+      "Sofa Throw Blanket"
+    ]
+  },
+  cebu: {
+    label: "Cebu Style Market",
+    revenueMultiplier: 1.28,
+    orderMultiplier: 1.18,
+    defaultTiktokStatus: "stale" as PlatformStatus,
+    conversion: { shopify: 4.2, tiktok: 3.4, total: "3.88%" },
+    inventory: { total: "94%", shopify: 97, tiktok: 89 },
+    products: [
+      "Linen Resort Shirt",
+      "Woven Crossbody Bag",
+      "Pearl Accent Earrings",
+      "Beach Day Sandals",
+      "Printed Midi Dress",
+      "Canvas Weekend Tote",
+      "Cropped Knit Top",
+      "Tailored Linen Shorts",
+      "Beaded Phone Strap",
+      "Oversized Sun Hat",
+      "Textured Bucket Bag",
+      "Silk Square Scarf",
+      "Everyday Hoop Earrings",
+      "Denim Wrap Skirt",
+      "Resort Slide Sandals"
+    ]
+  }
+};
+
+const dateRangeProfiles = {
+  today: { label: "Today", multiplier: 0.18, trendOffset: -3 },
+  "7d": { label: "Last 7 days", multiplier: 1, trendOffset: 0 },
+  "30d": { label: "Last 30 days", multiplier: 3.8, trendOffset: 4 },
+  quarter: { label: "This quarter", multiplier: 9.6, trendOffset: 7 }
+};
+
+type StoreKey = keyof typeof storeProfiles;
+type DateRangeKey = keyof typeof dateRangeProfiles;
+
+function resolveStore(storeId?: string) {
+  return storeProfiles[(storeId as StoreKey) in storeProfiles ? (storeId as StoreKey) : "manila"];
+}
+
+function resolveDateRange(dateRangeId?: string) {
+  return dateRangeProfiles[
+    (dateRangeId as DateRangeKey) in dateRangeProfiles ? (dateRangeId as DateRangeKey) : "7d"
+  ];
+}
+
+function scale(value: number, multiplier: number) {
+  return Math.round(value * multiplier);
+}
+
+const inventoryTemplates = [
+  { sku: "BAG-CAN-001", shopify: 128, tiktok: 128, sync: "synced", risk: "normal", minutes: 2 },
+  { sku: "APP-TEE-113", shopify: 36, tiktok: 48, sync: "out_of_sync", risk: "low", minutes: 19 },
+  { sku: "HOME-COF-221", shopify: 11, tiktok: 11, sync: "low_stock", risk: "low", minutes: 4 },
+  { sku: "HOME-LMP-041", shopify: 4, tiktok: 9, sync: "critical_stock", risk: "critical", minutes: 31 },
+  { sku: "TRV-CMP-508", shopify: 86, tiktok: 86, sync: "synced", risk: "normal", minutes: 1 },
+  { sku: "ACC-BTL-024", shopify: 22, tiktok: 26, sync: "delayed", risk: "normal", minutes: 18 },
+  { sku: "WRK-STD-212", shopify: 64, tiktok: 64, sync: "synced", risk: "normal", minutes: 3 },
+  { sku: "ACC-ORG-077", shopify: 17, tiktok: 21, sync: "out_of_sync", risk: "low", minutes: 27 },
+  { sku: "VID-LGT-034", shopify: 9, tiktok: 9, sync: "low_stock", risk: "low", minutes: 8 },
+  { sku: "BAG-FLD-302", shopify: 142, tiktok: 139, sync: "delayed", risk: "normal", minutes: 22 },
+  { sku: "DSK-TRY-610", shopify: 58, tiktok: 58, sync: "synced", risk: "normal", minutes: 5 },
+  { sku: "KIT-FOD-480", shopify: 6, tiktok: 8, sync: "critical_stock", risk: "critical", minutes: 35 },
+  { sku: "ELE-FAN-099", shopify: 73, tiktok: 73, sync: "synced", risk: "normal", minutes: 7 },
+  { sku: "APP-SCK-015", shopify: 29, tiktok: 35, sync: "out_of_sync", risk: "normal", minutes: 41 },
+  { sku: "ACC-CRD-888", shopify: 13, tiktok: 13, sync: "low_stock", risk: "low", minutes: 12 }
+] as const;
+
+export function getDashboardMock({ tiktokStatus, storeId, dateRangeId }: MockOptions): DashboardResponse {
+  const store = resolveStore(storeId);
+  const dateRange = resolveDateRange(dateRangeId);
+  const resolvedTiktokStatus = tiktokStatus ?? store.defaultTiktokStatus;
+  const multiplier = store.revenueMultiplier * dateRange.multiplier;
+  const orderMultiplier = store.orderMultiplier * dateRange.multiplier;
+  const tiktokFailed = resolvedTiktokStatus === "failed";
+  const tiktokDelayed = resolvedTiktokStatus === "delayed" || resolvedTiktokStatus === "stale" || tiktokFailed;
   const tiktokLastSuccessfulSync = tiktokFailed ? minutesAgo(74) : minutesAgo(18);
 
   const chartData = [
@@ -22,10 +149,10 @@ export function getDashboardMock({ tiktokStatus }: MockOptions): DashboardRespon
     ["Sun", 29200, 11100, 319, 126]
   ].map(([date, shopifyRevenue, tiktokRevenue, shopifyOrders, tiktokOrders]) => ({
     date: String(date),
-    shopifyRevenue: Number(shopifyRevenue),
-    tiktokRevenue: tiktokFailed && date === "Sun" ? null : Number(tiktokRevenue),
-    shopifyOrders: Number(shopifyOrders),
-    tiktokOrders: tiktokFailed && date === "Sun" ? null : Number(tiktokOrders),
+    shopifyRevenue: scale(Number(shopifyRevenue), multiplier),
+    tiktokRevenue: tiktokFailed && date === "Sun" ? null : scale(Number(tiktokRevenue), multiplier),
+    shopifyOrders: scale(Number(shopifyOrders), orderMultiplier),
+    tiktokOrders: tiktokFailed && date === "Sun" ? null : scale(Number(tiktokOrders), orderMultiplier),
     tiktokEstimated: tiktokDelayed
   }));
 
@@ -33,6 +160,22 @@ export function getDashboardMock({ tiktokStatus }: MockOptions): DashboardRespon
   const tiktokRevenue = chartData.reduce((sum, point) => sum + (point.tiktokRevenue ?? 0), 0);
   const shopifyOrders = chartData.reduce((sum, point) => sum + point.shopifyOrders, 0);
   const tiktokOrders = chartData.reduce((sum, point) => sum + (point.tiktokOrders ?? 0), 0);
+  const inventory = store.products.map((productName, index) => {
+    const template = inventoryTemplates[index % inventoryTemplates.length];
+    const critical = template.sync === "critical_stock";
+
+    return {
+      id: `${index + 1}`,
+      productName,
+      sku: template.sku,
+      shopifyStock: Math.max(critical ? 2 : 0, scale(template.shopify, store.orderMultiplier)),
+      tiktokStock:
+        tiktokFailed && critical ? null : Math.max(critical ? 3 : 0, scale(template.tiktok, store.orderMultiplier)),
+      syncStatus: tiktokFailed && critical ? "delayed" : template.sync,
+      riskLevel: template.risk,
+      updatedAt: minutesAgo(template.minutes)
+    };
+  });
 
   return {
     platforms: {
@@ -47,7 +190,7 @@ export function getDashboardMock({ tiktokStatus }: MockOptions): DashboardRespon
         }
       },
       tiktok: {
-        status: tiktokStatus,
+        status: resolvedTiktokStatus,
         lastSuccessfulSync: tiktokLastSuccessfulSync,
         lastAttemptedSync: minutesAgo(tiktokFailed ? 5 : 18),
         staleCacheAvailable: tiktokDelayed,
@@ -55,7 +198,7 @@ export function getDashboardMock({ tiktokStatus }: MockOptions): DashboardRespon
           ? "TikTok Shop API timed out. Historical data remains visible from cache."
           : "TikTok Shop data is delayed and may update on the next sync cycle.",
         retry: {
-          retryable: tiktokStatus !== "healthy",
+          retryable: resolvedTiktokStatus !== "healthy",
           nextRetryAt: minutesAgo(-7),
           attemptCount: tiktokFailed ? 3 : 1
         }
@@ -63,8 +206,8 @@ export function getDashboardMock({ tiktokStatus }: MockOptions): DashboardRespon
     },
     sync: {
       lastUpdated: new Date().toISOString(),
-      dataWindow: "Last 7 days",
-      globalStatus: tiktokStatus === "healthy" ? "healthy" : "delayed",
+      dataWindow: dateRange.label,
+      globalStatus: resolvedTiktokStatus === "healthy" ? "healthy" : "delayed",
       shopifyLatencyMs: 142,
       tiktokLatencyMs: tiktokFailed ? undefined : 1280
     },
@@ -75,10 +218,10 @@ export function getDashboardMock({ tiktokStatus }: MockOptions): DashboardRespon
         value: formatCurrency(shopifyRevenue + tiktokRevenue),
         helper: "Combined sales across connected channels",
         trend: 12.4,
-        status: tiktokDelayed ? "delayed" : "healthy",
+        status: tiktokDelayed ? resolvedTiktokStatus : "healthy",
         contributions: {
           shopify: { value: shopifyRevenue, label: formatCurrency(shopifyRevenue), status: "healthy" },
-          tiktok: { value: tiktokRevenue, label: formatCurrency(tiktokRevenue), status: tiktokStatus }
+          tiktok: { value: tiktokRevenue, label: formatCurrency(tiktokRevenue), status: resolvedTiktokStatus }
         },
         series: [38, 44, 41, 52, 57, 68, 62]
       },
@@ -88,103 +231,58 @@ export function getDashboardMock({ tiktokStatus }: MockOptions): DashboardRespon
         value: `${shopifyOrders + tiktokOrders}`,
         helper: "Paid orders excluding cancellations",
         trend: 8.1,
-        status: tiktokDelayed ? "delayed" : "healthy",
+        status: tiktokDelayed ? resolvedTiktokStatus : "healthy",
         contributions: {
           shopify: { value: shopifyOrders, label: `${shopifyOrders}`, status: "healthy" },
-          tiktok: { value: tiktokOrders, label: `${tiktokOrders}`, status: tiktokStatus }
+          tiktok: { value: tiktokOrders, label: `${tiktokOrders}`, status: resolvedTiktokStatus }
         },
         series: [302, 341, 327, 380, 411, 482, 445]
       },
       {
         id: "conversion",
         label: "Conversion Rate",
-        value: "3.42%",
+        value: store.conversion.total,
         helper: "Weighted session to purchase rate",
         trend: 4.6,
-        status: "healthy",
+        status: tiktokDelayed ? resolvedTiktokStatus : "healthy",
         contributions: {
-          shopify: { value: 3.7, label: "3.70%", status: "healthy" },
-          tiktok: { value: 2.9, label: "2.90%", status: tiktokStatus }
+          shopify: {
+            value: store.conversion.shopify,
+            label: `${store.conversion.shopify.toFixed(2)}%`,
+            status: "healthy"
+          },
+          tiktok: {
+            value: store.conversion.tiktok,
+            label: `${store.conversion.tiktok.toFixed(2)}%`,
+            status: resolvedTiktokStatus
+          }
         },
         series: [2.9, 3.1, 3.0, 3.3, 3.4, 3.6, 3.42]
       },
       {
         id: "inventory",
         label: "Inventory Health",
-        value: "91%",
+        value: store.inventory.total,
         helper: "Products stocked and in sync",
         trend: -2.3,
-        status: "delayed",
+        status: tiktokDelayed ? resolvedTiktokStatus : "healthy",
         contributions: {
-          shopify: { value: 96, label: "96%", status: "healthy" },
-          tiktok: { value: 84, label: "84%", status: tiktokStatus }
+          shopify: {
+            value: store.inventory.shopify,
+            label: `${store.inventory.shopify}%`,
+            status: "healthy"
+          },
+          tiktok: {
+            value: store.inventory.tiktok,
+            label: `${store.inventory.tiktok}%`,
+            status: resolvedTiktokStatus
+          }
         },
         series: [94, 94, 93, 92, 91, 90, 91]
       }
     ],
     chartData,
-    inventory: [
-      {
-        id: "1",
-        productName: "Everyday Canvas Tote",
-        sku: "BAG-CAN-001",
-        shopifyStock: 128,
-        tiktokStock: 128,
-        syncStatus: "synced",
-        riskLevel: "normal",
-        updatedAt: minutesAgo(2)
-      },
-      {
-        id: "2",
-        productName: "Ribbed Performance Tee",
-        sku: "APP-TEE-113",
-        shopifyStock: 36,
-        tiktokStock: 48,
-        syncStatus: "out_of_sync",
-        riskLevel: "low",
-        updatedAt: minutesAgo(19)
-      },
-      {
-        id: "3",
-        productName: "Ceramic Pour Over Kit",
-        sku: "HOME-COF-221",
-        shopifyStock: 11,
-        tiktokStock: 11,
-        syncStatus: "low_stock",
-        riskLevel: "low",
-        updatedAt: minutesAgo(4)
-      },
-      {
-        id: "4",
-        productName: "Modular Desk Lamp",
-        sku: "HOME-LMP-041",
-        shopifyStock: 4,
-        tiktokStock: tiktokFailed ? null : 9,
-        syncStatus: tiktokFailed ? "delayed" : "critical_stock",
-        riskLevel: "critical",
-        updatedAt: minutesAgo(31)
-      },
-      {
-        id: "5",
-        productName: "Travel Compression Set",
-        sku: "TRV-CMP-508",
-        shopifyStock: 86,
-        tiktokStock: 86,
-        syncStatus: "synced",
-        riskLevel: "normal",
-        updatedAt: minutesAgo(1)
-      },
-      {
-        id: "6",
-        productName: "Matte Bottle 24oz",
-        sku: "ACC-BTL-024",
-        shopifyStock: 22,
-        tiktokStock: 26,
-        syncStatus: "delayed",
-        riskLevel: "normal",
-        updatedAt: minutesAgo(18)
-      }
-    ],
+    inventory,
     alerts: [
       {
         id: "sync-delay",
@@ -198,7 +296,7 @@ export function getDashboardMock({ tiktokStatus }: MockOptions): DashboardRespon
       {
         id: "low-stock",
         title: "Inventory nearing threshold",
-        description: "Ceramic Pour Over Kit has 11 units remaining across both channels.",
+        description: `${store.products[2]} has ${scale(11, store.orderMultiplier)} units remaining across both channels.`,
         severity: "info",
         actionLabel: "View SKU",
         createdAt: minutesAgo(24)
@@ -206,7 +304,7 @@ export function getDashboardMock({ tiktokStatus }: MockOptions): DashboardRespon
       {
         id: "stock-mismatch",
         title: "Stock mismatch detected",
-        description: "Ribbed Performance Tee differs by 12 units between Shopify and TikTok Shop.",
+        description: `${store.products[1]} differs between Shopify and TikTok Shop.`,
         severity: "warning",
         platform: "tiktok",
         actionLabel: "Review match",

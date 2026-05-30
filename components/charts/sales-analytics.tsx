@@ -47,6 +47,7 @@ export function SalesAnalytics({
 
   const tiktokStatus = data?.platforms.tiktok.status;
   const tiktokDegraded = tiktokStatus && tiktokStatus !== "healthy";
+  const tiktokStroke = tiktokDegraded ? "#ef4444" : "#14b8a6";
   const formatter = metric === "revenue" ? formatCurrency : formatNumber;
 
   return (
@@ -91,7 +92,7 @@ export function SalesAnalytics({
       {!isLoading && chartData?.length ? (
         <div className="space-y-4">
           {tiktokDegraded ? (
-            <div className="flex flex-col gap-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-950 dark:border-red-300/40 dark:bg-red-950/55 dark:text-red-50 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 rounded-lg border border-l-4 border-red-200 border-l-red-400 bg-red-100/80 p-3 text-sm text-red-950 dark:border-red-300/40 dark:border-l-red-400 dark:bg-red-950/55 dark:text-red-50 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
                 <Clock3 className="h-4 w-4 text-red-600 dark:text-red-300" />
                 <span>
@@ -112,24 +113,34 @@ export function SalesAnalytics({
                 <AreaChart data={chartData} margin={{ top: 12, right: 18, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="shopifyFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#2563eb" stopOpacity={0.22} />
-                      <stop offset="95%" stopColor="#2563eb" stopOpacity={0.03} />
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.24} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0.03} />
                     </linearGradient>
                     <linearGradient id="tiktokFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#14b8a6" stopOpacity={0.03} />
+                      <stop offset="5%" stopColor={tiktokStroke} stopOpacity={0.2} />
+                      <stop offset="95%" stopColor={tiktokStroke} stopOpacity={0.03} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid stroke="currentColor" className="text-border" strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="date" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => formatter(Number(value))} width={70} />
-                  <Tooltip formatter={(value) => formatter(Number(value))} />
+                  <Tooltip
+                    formatter={(value) => formatter(Number(value))}
+                    contentStyle={{
+                      background: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "12px",
+                      boxShadow: "0 14px 36px rgba(15, 23, 42, 0.12)",
+                      color: "hsl(var(--foreground))"
+                    }}
+                    labelStyle={{ color: "hsl(var(--foreground))", fontWeight: 600 }}
+                  />
                   <Legend />
-                  <Area type="monotone" dataKey="Shopify" stroke="#2563eb" fill="url(#shopifyFill)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="Shopify" stroke="#10b981" fill="url(#shopifyFill)" strokeWidth={2} />
                   <Area
                     type="monotone"
                     dataKey="TikTok Shop"
-                    stroke="#14b8a6"
+                    stroke={tiktokStroke}
                     fill="url(#tiktokFill)"
                     strokeWidth={2}
                     strokeDasharray={tiktokDegraded ? "5 5" : undefined}
@@ -141,13 +152,23 @@ export function SalesAnalytics({
                   <CartesianGrid stroke="currentColor" className="text-border" strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="date" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => formatter(Number(value))} width={70} />
-                  <Tooltip formatter={(value) => formatter(Number(value))} />
+                  <Tooltip
+                    formatter={(value) => formatter(Number(value))}
+                    contentStyle={{
+                      background: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "12px",
+                      boxShadow: "0 14px 36px rgba(15, 23, 42, 0.12)",
+                      color: "hsl(var(--foreground))"
+                    }}
+                    labelStyle={{ color: "hsl(var(--foreground))", fontWeight: 600 }}
+                  />
                   <Legend />
-                  <Line type="monotone" dataKey="Shopify" stroke="#2563eb" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="Shopify" stroke="#10b981" strokeWidth={2} dot={false} />
                   <Line
                     type="monotone"
                     dataKey="TikTok Shop"
-                    stroke="#14b8a6"
+                    stroke={tiktokStroke}
                     strokeWidth={2}
                     strokeDasharray={tiktokDegraded ? "5 5" : undefined}
                     dot={false}

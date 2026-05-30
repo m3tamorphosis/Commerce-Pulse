@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import {
   AlertTriangle,
   BarChart3,
-  Box,
   ChevronLeft,
   LayoutDashboard,
   PackageSearch,
@@ -60,8 +59,13 @@ export function Sidebar({ collapsed, mobileOpen, onCollapse, onMobileClose }: Si
         <div className="flex w-full flex-col">
           <div className="flex h-16 items-center justify-between border-b px-4">
             <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-950 text-white dark:bg-primary">
-                <Box className="h-5 w-5" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl border bg-slate-950 text-white shadow-sm dark:bg-card">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/branding/logo.png"
+                  alt="Commerce Pulse"
+                  className="h-full w-full scale-[2.6] object-cover"
+                />
               </div>
               {!collapsed ? (
                 <div className="min-w-0">

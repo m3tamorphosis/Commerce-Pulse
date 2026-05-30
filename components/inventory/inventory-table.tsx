@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ArrowDownUp, Search } from "lucide-react";
 import type { InventoryItem, RiskLevel, SyncStatus } from "@/types/dashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,12 +23,30 @@ export function InventoryTable({
   items?: InventoryItem[];
   isLoading: boolean;
 }) {
+  const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<FilterKey>("all");
   const [sortKey, setSortKey] = useState<SortKey>("riskLevel");
   const [page, setPage] = useState(1);
   const [animationKey, setAnimationKey] = useState(0);
   const pageSize = 5;
+
+  useEffect(() => {
+    const filterParam = searchParams.get("filter") as FilterKey | null;
+    const riskParam = searchParams.get("risk") as FilterKey | null;
+    const nextFilter =
+      filterParam && filters.includes(filterParam)
+        ? filterParam
+        : riskParam && filters.includes(riskParam)
+          ? riskParam
+          : null;
+
+    if (nextFilter) {
+      setFilter(nextFilter);
+      setPage(1);
+      setAnimationKey((value) => value + 1);
+    }
+  }, [searchParams]);
 
   const filtered = useMemo(() => {
     const normalized = query.toLowerCase().trim();
@@ -110,7 +129,7 @@ export function InventoryTable({
           <>
             <div className="overflow-x-auto rounded-xl border">
               <table className="min-w-[820px] w-full border-collapse text-left text-sm">
-                <thead className="bg-muted/70 text-xs uppercase tracking-wide text-muted-foreground">
+                <thead className="bg-muted text-xs uppercase tracking-wide text-muted-foreground">
                   <tr>
                     {[
                       ["productName", "Product Name"],
@@ -146,8 +165,11 @@ export function InventoryTable({
                       <tr
                         key={`${animationKey}-${item.id}`}
                         className={cn(
-                          "motion-safe:animate-row-in transition-colors duration-200",
-                          mismatch ? "bg-red-50/50 dark:bg-red-950/35" : undefined
+                          "motion-safe:animate-row-in transition-colors duration-200 hover:bg-muted/45",
+                          mismatch
+                            ? "border-l-4 border-l-red-400 bg-red-100/80 dark:border-l-red-400 dark:bg-red-950/35"
+                            : undefined,
+                          filter !== "all" && "ring-1 ring-primary/15"
                         )}
                         style={{ animationDelay: `${index * 35}ms` }}
                       >

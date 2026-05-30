@@ -11,7 +11,7 @@ const buttonVariants = cva(
         secondary: "border bg-card text-foreground hover:bg-muted",
         ghost: "text-muted-foreground hover:bg-muted hover:text-foreground",
         warning:
-          "bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-500/20 dark:text-red-50 dark:hover:bg-red-500/30"
+          "border border-red-200 bg-red-100 text-red-800 hover:bg-red-200 dark:border-red-300/40 dark:bg-red-500/20 dark:text-red-50 dark:hover:bg-red-500/30"
       },
       size: {
         sm: "h-8 px-3",

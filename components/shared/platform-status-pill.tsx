@@ -20,14 +20,14 @@ export function PlatformStatusPill({ platform, health, isRetrying, onRetry }: Pl
         className={cn(
           "h-4 w-4 shrink-0",
           health.status === "healthy" && "text-emerald-600",
-          health.status === "delayed" && "text-amber-600",
-          health.status === "stale" && "text-amber-600",
+          health.status === "delayed" && "text-red-600 dark:text-red-300",
+          health.status === "stale" && "text-red-600 dark:text-red-300",
           health.status === "failed" && "text-rose-600"
         )}
       />
       <div className="min-w-0">
         <p className="truncate font-medium capitalize">{platform === "shopify" ? "Shopify" : "TikTok Shop"}</p>
-        <p className="truncate text-xs text-muted-foreground">
+        <p className="truncate text-xs font-medium text-muted-foreground">
           {statusLabel(health.status)} · synced {formatRelativeMinutes(health.lastSuccessfulSync)}
         </p>
       </div>

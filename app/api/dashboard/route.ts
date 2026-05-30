@@ -5,12 +5,16 @@ import type { PlatformStatus } from "@/types/dashboard";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const scenario = searchParams.get("scenario") as PlatformStatus | null;
+  const storeId = searchParams.get("store") ?? "manila";
+  const dateRangeId = searchParams.get("range") ?? "7d";
 
   await new Promise((resolve) => setTimeout(resolve, 350));
 
   return NextResponse.json(
     getDashboardMock({
-      tiktokStatus: scenario ?? "delayed"
+      tiktokStatus: scenario ?? undefined,
+      storeId,
+      dateRangeId
     })
   );
 }

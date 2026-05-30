@@ -18,21 +18,20 @@ import { SyncIndicator } from "@/components/shared/sync-indicator";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { useDashboardQuery } from "@/hooks/use-dashboard-query";
 import { useTheme } from "@/components/providers/theme-provider";
+import { dateRanges, stores, useWorkspace } from "@/components/providers/workspace-provider";
 import { formatRelativeMinutes } from "@/lib/utils";
 
-const stores = ["Northstar Supply Co.", "Harbor & Finch", "Brightline Goods"];
-const dateRanges = ["Today", "Last 7 days", "Last 30 days", "This quarter"];
-
 export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
-  const [selectedStore, setSelectedStore] = useState(stores[0]);
-  const [selectedDateRange, setSelectedDateRange] = useState(dateRanges[1]);
   const [storeOpen, setStoreOpen] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [alertsRead, setAlertsRead] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const { data, isFetching, refetch } = useDashboardQuery();
   const { theme, toggleTheme } = useTheme();
-  const alertCount = data?.alerts.length ?? 0;
+  const { selectedStore, selectedDateRange, setSelectedStoreId, setSelectedDateRangeId } =
+    useWorkspace();
+  const alertCount = alertsRead ? 0 : (data?.alerts.length ?? 0);
 
   return (
     <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur">
@@ -54,11 +53,11 @@ export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
               }}
             >
               <Store className="h-4 w-4 shrink-0 text-muted-foreground" />
-              <span className="truncate">{selectedStore}</span>
+              <span className="truncate">{selectedStore.label}</span>
               <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
             </button>
             {storeOpen ? (
-              <div className="absolute left-0 top-11 z-50 w-64 animate-popover-in overflow-hidden rounded-xl border bg-card shadow-soft">
+              <div className="absolute left-0 top-11 z-50 w-64 animate-popover-in overflow-hidden rounded-xl border bg-card shadow-elevated">
                 <div className="border-b p-3">
                   <p className="text-sm font-semibold">Select store</p>
                   <p className="text-xs text-muted-foreground">Switch merchant workspace context</p>
@@ -66,15 +65,17 @@ export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
                 <div className="p-2">
                   {stores.map((store) => (
                     <button
-                      key={store}
+                      key={store.id}
                       className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm text-muted-foreground transition duration-150 ease-out hover:bg-muted hover:text-foreground active:scale-[0.99]"
                       onClick={() => {
-                        setSelectedStore(store);
+                        setSelectedStoreId(store.id);
                         setStoreOpen(false);
                       }}
                     >
-                      <span>{store}</span>
-                      {selectedStore === store ? <Check className="h-4 w-4 text-primary" /> : null}
+                      <span>{store.label}</span>
+                      {selectedStore.id === store.id ? (
+                        <Check className="h-4 w-4 text-primary" />
+                      ) : null}
                     </button>
                   ))}
                 </div>
@@ -94,26 +95,28 @@ export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
               }}
             >
               <CalendarDays className="h-4 w-4" />
-              <span>{selectedDateRange}</span>
+              <span>{selectedDateRange.label}</span>
               <ChevronDown className="h-4 w-4" />
             </button>
             {dateOpen ? (
-              <div className="absolute left-0 top-11 z-50 w-48 animate-popover-in overflow-hidden rounded-xl border bg-card shadow-soft">
+              <div className="absolute left-0 top-11 z-50 w-48 animate-popover-in overflow-hidden rounded-xl border bg-card shadow-elevated">
                 <div className="border-b p-3">
                   <p className="text-sm font-semibold">Date range</p>
                 </div>
                 <div className="p-2">
                   {dateRanges.map((range) => (
                     <button
-                      key={range}
+                      key={range.id}
                       className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm text-muted-foreground transition duration-150 ease-out hover:bg-muted hover:text-foreground active:scale-[0.99]"
                       onClick={() => {
-                        setSelectedDateRange(range);
+                        setSelectedDateRangeId(range.id);
                         setDateOpen(false);
                       }}
                     >
-                      <span>{range}</span>
-                      {selectedDateRange === range ? <Check className="h-4 w-4 text-primary" /> : null}
+                      <span>{range.label}</span>
+                      {selectedDateRange.id === range.id ? (
+                        <Check className="h-4 w-4 text-primary" />
+                      ) : null}
                     </button>
                   ))}
                 </div>
@@ -154,6 +157,7 @@ export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
               aria-label="Open notifications"
               onClick={() => {
                 setNotificationsOpen((value) => !value);
+                setAlertsRead(true);
                 setStoreOpen(false);
                 setDateOpen(false);
                 setProfileOpen(false);
@@ -167,7 +171,7 @@ export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
               ) : null}
             </Button>
             {notificationsOpen ? (
-              <div className="absolute right-0 top-11 z-50 w-80 animate-popover-in overflow-hidden rounded-xl border bg-card shadow-soft">
+              <div className="absolute right-0 top-11 z-50 w-80 animate-popover-in overflow-hidden rounded-xl border bg-card shadow-elevated">
                 <div className="border-b p-4">
                   <p className="font-semibold">Notifications</p>
                   <p className="text-sm text-muted-foreground">
@@ -205,7 +209,7 @@ export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
           </div>
           <div className="relative">
             <button
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white ring-offset-background transition duration-150 ease-out hover:bg-slate-800 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
+              className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border bg-slate-900 text-sm font-semibold text-white ring-offset-background transition duration-150 ease-out hover:bg-slate-800 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-card dark:text-primary-foreground dark:hover:bg-muted"
               aria-label="Open user menu"
               onClick={() => {
                 setProfileOpen((value) => !value);
@@ -214,13 +218,18 @@ export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
                 setNotificationsOpen(false);
               }}
             >
-              CP
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/branding/logo.png"
+                alt="Commerce Pulse"
+                className="h-full w-full scale-[2.6] object-cover"
+              />
             </button>
             {profileOpen ? (
-              <div className="absolute right-0 top-11 z-50 w-64 animate-popover-in overflow-hidden rounded-xl border bg-card shadow-soft">
+              <div className="absolute right-0 top-11 z-50 w-64 animate-popover-in overflow-hidden rounded-xl border bg-card shadow-elevated">
                 <div className="border-b p-4">
                   <p className="font-semibold">Commerce Pulse</p>
-                  <p className="text-sm text-muted-foreground">Northstar Supply Co.</p>
+                  <p className="text-sm text-muted-foreground">{selectedStore.label}</p>
                 </div>
                 <div className="p-2">
                   {["Account settings", "Store connections", "Sync preferences"].map((item) => (

@@ -8,6 +8,7 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const tone = getStatusTone(status);
+  const label = statusLabel(status);
 
   return (
     <span
@@ -16,13 +17,13 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
         tone === "success" &&
           "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-400/30 dark:bg-emerald-400/15 dark:text-emerald-200",
         tone === "warning" &&
-          "border-red-200 bg-red-50 text-red-700 dark:border-red-300/40 dark:bg-red-950/45 dark:text-red-100",
+          "border-red-200 bg-red-100 text-red-800 dark:border-red-300/40 dark:bg-red-950/45 dark:text-red-100",
         tone === "danger" &&
-          "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-300/35 dark:bg-rose-400/15 dark:text-rose-100",
+          "border-rose-200 bg-rose-100 text-rose-800 dark:border-rose-300/35 dark:bg-rose-400/15 dark:text-rose-100",
         className
       )}
     >
-      {statusLabel(status)}
+      {label}
     </span>
   );
 }
