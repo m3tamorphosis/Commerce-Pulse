@@ -6,6 +6,7 @@ import { PlatformStatusPill } from "@/components/shared/platform-status-pill";
 import { SalesAnalytics } from "@/components/charts/sales-analytics";
 import { KpiGrid } from "@/components/dashboard/kpi-grid";
 import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
+import { AnalyticsInsights } from "@/components/dashboard/analytics-insights";
 
 export function AnalyticsView() {
   const { data, isLoading, isFetching, refetch } = useDashboardQuery();
@@ -44,6 +45,9 @@ export function AnalyticsView() {
       </div>
       <div className="motion-safe:animate-section-in" style={{ animationDelay: "120ms" }}>
         <SalesAnalytics data={data} isLoading={isLoading} onRetry={() => void refetch()} />
+      </div>
+      <div className="motion-safe:animate-section-in" style={{ animationDelay: "150ms" }}>
+        <AnalyticsInsights data={data} isLoading={isLoading} />
       </div>
     </div>
   );

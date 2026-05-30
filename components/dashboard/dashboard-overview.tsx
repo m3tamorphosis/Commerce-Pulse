@@ -11,6 +11,7 @@ import { SalesAnalytics } from "@/components/charts/sales-analytics";
 import { InventoryTable } from "@/components/inventory/inventory-table";
 import { AlertsPanel } from "@/components/alerts/alerts-panel";
 import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
+import { AnalyticsInsights } from "@/components/dashboard/analytics-insights";
 import type { OperationalAlert } from "@/types/dashboard";
 
 export function DashboardOverview() {
@@ -93,6 +94,10 @@ export function DashboardOverview() {
 
       <div className="motion-safe:animate-section-in" style={{ animationDelay: "80ms" }}>
         <KpiGrid metrics={data?.metrics} isLoading={isLoading} />
+      </div>
+
+      <div className="motion-safe:animate-section-in" style={{ animationDelay: "110ms" }}>
+        <AnalyticsInsights data={data} isLoading={isLoading} />
       </div>
 
       <div className="motion-safe:animate-section-in grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(340px,0.7fr)]" style={{ animationDelay: "120ms" }}>

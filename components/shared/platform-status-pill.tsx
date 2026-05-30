@@ -13,6 +13,8 @@ export function PlatformStatusPill({ platform, health, isRetrying, onRetry }: Pl
   const Icon =
     health.status === "healthy" ? CircleCheck : health.status === "failed" ? TriangleAlert : Clock3;
   const canRetry = health.retry.retryable && onRetry;
+  const syncLabel = health.status === "healthy" ? "synced" : "checked";
+  const syncTime = health.status === "healthy" ? health.lastSuccessfulSync : health.lastAttemptedSync;
 
   return (
     <div className="flex min-w-0 items-center gap-2 rounded-lg border bg-card px-3 py-2 text-sm">
@@ -28,7 +30,7 @@ export function PlatformStatusPill({ platform, health, isRetrying, onRetry }: Pl
       <div className="min-w-0">
         <p className="truncate font-medium capitalize">{platform === "shopify" ? "Shopify" : "TikTok Shop"}</p>
         <p className="truncate text-xs font-medium text-muted-foreground">
-          {statusLabel(health.status)} · synced {formatRelativeMinutes(health.lastSuccessfulSync)}
+          {statusLabel(health.status)} · {syncLabel} {formatRelativeMinutes(syncTime)}
         </p>
       </div>
       {canRetry ? (

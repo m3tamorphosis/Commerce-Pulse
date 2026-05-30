@@ -14,7 +14,6 @@ const storeProfiles = {
     label: "Manila Supply Co.",
     revenueMultiplier: 1,
     orderMultiplier: 1,
-    defaultTiktokStatus: "delayed" as PlatformStatus,
     conversion: { shopify: 3.7, tiktok: 2.9, total: "3.42%" },
     inventory: { total: "91%", shopify: 96, tiktok: 84 },
     products: [
@@ -39,7 +38,6 @@ const storeProfiles = {
     label: "Luzon Home Goods",
     revenueMultiplier: 0.72,
     orderMultiplier: 0.78,
-    defaultTiktokStatus: "healthy" as PlatformStatus,
     conversion: { shopify: 3.1, tiktok: 2.6, total: "2.94%" },
     inventory: { total: "87%", shopify: 92, tiktok: 79 },
     products: [
@@ -64,7 +62,6 @@ const storeProfiles = {
     label: "Cebu Style Market",
     revenueMultiplier: 1.28,
     orderMultiplier: 1.18,
-    defaultTiktokStatus: "stale" as PlatformStatus,
     conversion: { shopify: 4.2, tiktok: 3.4, total: "3.88%" },
     inventory: { total: "94%", shopify: 97, tiktok: 89 },
     products: [
@@ -111,6 +108,65 @@ function scale(value: number, multiplier: number) {
   return Math.round(value * multiplier);
 }
 
+function resolveGlobalTiktokStatus(statusOverride?: PlatformStatus, storeId?: string): PlatformStatus {
+  if (statusOverride) {
+    return statusOverride;
+  }
+
+  const storeOffset: Record<string, number> = {
+    manila: 0,
+    luzon: 2,
+    cebu: 4
+  };
+  const cycle = (Math.floor(Date.now() / 60000) + (storeOffset[storeId ?? "manila"] ?? 0)) % 8;
+
+  if (cycle === 2 || cycle === 3 || cycle === 7) {
+    return "healthy";
+  }
+
+  if (cycle === 5) {
+    return "stale";
+  }
+
+  return "delayed";
+}
+
+function getTiktokSyncTiming(status: PlatformStatus) {
+  if (status === "healthy") {
+    return {
+      lastSuccessfulSync: minutesAgo(1),
+      lastAttemptedSync: minutesAgo(1),
+      latencyMs: 920,
+      attemptCount: 0
+    };
+  }
+
+  if (status === "failed") {
+    return {
+      lastSuccessfulSync: minutesAgo(74),
+      lastAttemptedSync: minutesAgo(5),
+      latencyMs: undefined,
+      attemptCount: 3
+    };
+  }
+
+  if (status === "stale") {
+    return {
+      lastSuccessfulSync: minutesAgo(42),
+      lastAttemptedSync: minutesAgo(0),
+      latencyMs: 1850,
+      attemptCount: 2
+    };
+  }
+
+  return {
+    lastSuccessfulSync: minutesAgo(18),
+    lastAttemptedSync: minutesAgo(0),
+    latencyMs: 1280,
+    attemptCount: 1
+  };
+}
+
 const inventoryTemplates = [
   { sku: "BAG-CAN-001", shopify: 128, tiktok: 128, sync: "synced", risk: "normal", minutes: 2 },
   { sku: "APP-TEE-113", shopify: 36, tiktok: 48, sync: "out_of_sync", risk: "low", minutes: 19 },
@@ -132,12 +188,12 @@ const inventoryTemplates = [
 export function getDashboardMock({ tiktokStatus, storeId, dateRangeId }: MockOptions): DashboardResponse {
   const store = resolveStore(storeId);
   const dateRange = resolveDateRange(dateRangeId);
-  const resolvedTiktokStatus = tiktokStatus ?? store.defaultTiktokStatus;
+  const resolvedTiktokStatus = resolveGlobalTiktokStatus(tiktokStatus, storeId);
   const multiplier = store.revenueMultiplier * dateRange.multiplier;
   const orderMultiplier = store.orderMultiplier * dateRange.multiplier;
   const tiktokFailed = resolvedTiktokStatus === "failed";
   const tiktokDelayed = resolvedTiktokStatus === "delayed" || resolvedTiktokStatus === "stale" || tiktokFailed;
-  const tiktokLastSuccessfulSync = tiktokFailed ? minutesAgo(74) : minutesAgo(18);
+  const tiktokSync = getTiktokSyncTiming(resolvedTiktokStatus);
 
   const chartData = [
     ["Mon", 18400, 7400, 214, 88],
@@ -191,16 +247,18 @@ export function getDashboardMock({ tiktokStatus, storeId, dateRangeId }: MockOpt
       },
       tiktok: {
         status: resolvedTiktokStatus,
-        lastSuccessfulSync: tiktokLastSuccessfulSync,
-        lastAttemptedSync: minutesAgo(tiktokFailed ? 5 : 18),
+        lastSuccessfulSync: tiktokSync.lastSuccessfulSync,
+        lastAttemptedSync: tiktokSync.lastAttemptedSync,
         staleCacheAvailable: tiktokDelayed,
-        warningMessage: tiktokFailed
-          ? "TikTok Shop API timed out. Historical data remains visible from cache."
-          : "TikTok Shop data is delayed and may update on the next sync cycle.",
+        warningMessage: tiktokDelayed
+          ? tiktokFailed
+            ? "TikTok Shop API timed out. Historical data remains visible from cache."
+            : "TikTok Shop data is delayed and may update on the next sync cycle."
+          : undefined,
         retry: {
           retryable: resolvedTiktokStatus !== "healthy",
           nextRetryAt: minutesAgo(-7),
-          attemptCount: tiktokFailed ? 3 : 1
+          attemptCount: tiktokSync.attemptCount
         }
       }
     },
@@ -209,7 +267,7 @@ export function getDashboardMock({ tiktokStatus, storeId, dateRangeId }: MockOpt
       dataWindow: dateRange.label,
       globalStatus: resolvedTiktokStatus === "healthy" ? "healthy" : "delayed",
       shopifyLatencyMs: 142,
-      tiktokLatencyMs: tiktokFailed ? undefined : 1280
+      tiktokLatencyMs: tiktokSync.latencyMs
     },
     metrics: [
       {
@@ -284,15 +342,19 @@ export function getDashboardMock({ tiktokStatus, storeId, dateRangeId }: MockOpt
     chartData,
     inventory,
     alerts: [
-      {
-        id: "sync-delay",
-        title: "TikTok sync delayed",
-        description: "Recent TikTok order and inventory updates are using the last successful cache.",
-        severity: "warning",
-        platform: "tiktok",
-        actionLabel: "Retry TikTok",
-        createdAt: minutesAgo(18)
-      },
+      ...(tiktokDelayed
+        ? [
+            {
+              id: "sync-delay",
+              title: "TikTok sync delayed",
+              description: "Recent TikTok order and inventory updates are using the last successful cache.",
+              severity: "warning" as const,
+              platform: "tiktok" as const,
+              actionLabel: "Retry TikTok",
+              createdAt: minutesAgo(18)
+            }
+          ]
+        : []),
       {
         id: "low-stock",
         title: "Inventory nearing threshold",

@@ -16,7 +16,7 @@ export function useDashboardQuery(scenario?: PlatformStatus) {
         storeId: selectedStore.id,
         dateRangeId: selectedDateRange.id
       }),
-    refetchInterval: 60000,
+    refetchInterval: 15000,
     retry: 1,
     staleTime: 30000
   });

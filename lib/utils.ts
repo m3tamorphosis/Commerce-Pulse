@@ -20,7 +20,11 @@ export function formatNumber(value: number) {
 
 export function formatRelativeMinutes(date: string) {
   const diff = Date.now() - new Date(date).getTime();
-  const minutes = Math.max(1, Math.round(diff / 60000));
+  if (diff < 60000) {
+    return "just now";
+  }
+
+  const minutes = Math.max(1, Math.floor(diff / 60000));
   return `${minutes} min${minutes === 1 ? "" : "s"} ago`;
 }
 

@@ -182,12 +182,22 @@ export function InventoryTable({
                           </div>
                         </td>
                         <td className="px-4 py-4 font-mono text-xs text-muted-foreground">{item.sku}</td>
-                        <td className="px-4 py-4 font-medium">{item.shopifyStock}</td>
+                        <td className="px-4 py-4 font-medium text-emerald-700 dark:text-emerald-200">
+                          {item.shopifyStock}
+                        </td>
                         <td className="px-4 py-4 font-medium">
                           {item.tiktokStock === null ? (
-                            <span className="text-muted-foreground">Cached unavailable</span>
+                            <span className="text-red-700 dark:text-red-200">Unavailable</span>
                           ) : (
-                            item.tiktokStock
+                            <span
+                              className={
+                                mismatch || item.syncStatus === "delayed"
+                                  ? "text-red-700 dark:text-red-200"
+                                  : "text-emerald-700 dark:text-emerald-200"
+                              }
+                            >
+                              {item.tiktokStock}
+                            </span>
                           )}
                           {mismatch ? (
                             <p className="mt-1 text-xs text-red-700 dark:text-red-200">Mismatch: {Math.abs(item.shopifyStock - item.tiktokStock!)} units</p>

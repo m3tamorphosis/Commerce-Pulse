@@ -26,8 +26,8 @@ export function MetricCard({ metric }: { metric: MetricCardData }) {
             <div
               key={`${metric.id}-${index}`}
               className={cn(
-                "w-full origin-bottom rounded-t bg-slate-200 transition duration-200 hover:opacity-90 motion-safe:animate-bar-in dark:bg-slate-700",
-                metric.status === "delayed" && index > metric.series.length - 3
+                "group relative w-full origin-bottom rounded-t bg-slate-200 transition duration-200 hover:opacity-95 motion-safe:animate-bar-in dark:bg-slate-700",
+                metric.status !== "healthy" && index > metric.series.length - 3
                   ? "bg-red-300/80 dark:bg-red-400/80"
                   : "bg-emerald-500/75 dark:bg-emerald-400/80"
               )}
@@ -35,7 +35,14 @@ export function MetricCard({ metric }: { metric: MetricCardData }) {
                 height: `${Math.max(22, (point / max) * 100)}%`,
                 animationDelay: `${index * 35}ms`
               }}
-            />
+            >
+              <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border bg-card px-2 py-1 text-xs font-medium text-foreground shadow-elevated group-hover:block">
+                {point}
+                <span className="ml-1 text-muted-foreground">
+                  {metric.status !== "healthy" && index > metric.series.length - 3 ? "delayed" : "current"}
+                </span>
+              </div>
+            </div>
           ))}
         </div>
         <div className="grid grid-cols-2 gap-3 text-sm">
