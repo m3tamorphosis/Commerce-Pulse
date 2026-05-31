@@ -91,7 +91,7 @@ export function InventoryTable({
           <div className="relative w-full lg:w-80">
             <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <input
-              className="h-9 w-full rounded-lg border bg-card pl-9 pr-3 text-sm outline-none transition focus:ring-2 focus:ring-ring"
+              className="h-9 w-full rounded-lg border border-input bg-card/95 pl-9 pr-3 text-sm shadow-sm outline-none transition placeholder:text-muted-foreground/75 focus:border-primary/45 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background dark:bg-card/90"
               placeholder="Search product or SKU"
               value={query}
               onChange={(event) => {
@@ -107,7 +107,9 @@ export function InventoryTable({
               key={option}
               className={cn(
                 "whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-medium transition duration-150 ease-out active:scale-[0.98]",
-                filter === option ? "bg-slate-950 text-white" : "bg-card text-muted-foreground hover:bg-muted"
+                filter === option
+                  ? "border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/15"
+                  : "border-border/85 bg-card/95 text-muted-foreground shadow-sm hover:border-primary/30 hover:bg-muted/70 hover:text-foreground dark:border-white/10 dark:bg-card/90"
               )}
               onClick={() => {
                 setFilter(option);
@@ -127,9 +129,9 @@ export function InventoryTable({
         ) : null}
         {!isLoading && visible.length ? (
           <>
-            <div className="overflow-x-auto rounded-xl border">
+            <div className="overflow-x-auto rounded-xl border border-border/80 shadow-sm dark:border-white/10">
               <table className="min-w-[820px] w-full border-collapse text-left text-sm">
-                <thead className="bg-muted text-xs uppercase tracking-wide text-muted-foreground">
+                <thead className="bg-muted/75 text-xs uppercase tracking-wide text-muted-foreground dark:bg-muted/55">
                   <tr>
                     {[
                       ["productName", "Product Name"],
@@ -158,16 +160,16 @@ export function InventoryTable({
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y bg-card">
+                <tbody className="divide-y divide-border/70 bg-card dark:divide-white/10">
                   {visible.map((item, index) => {
                     const mismatch = item.tiktokStock !== null && item.shopifyStock !== item.tiktokStock;
                     return (
                       <tr
                         key={`${animationKey}-${item.id}`}
                         className={cn(
-                          "motion-safe:animate-row-in transition-colors duration-200 hover:bg-muted/45",
+                          "motion-safe:animate-row-in transition-colors duration-200 hover:bg-muted/45 dark:hover:bg-muted/35",
                           mismatch
-                            ? "border-l-4 border-l-red-400 bg-red-100/80 dark:border-l-red-400 dark:bg-red-950/35"
+                            ? "border-l-4 border-l-rose-500 bg-rose-50/85 dark:border-l-rose-400 dark:bg-rose-950/45"
                             : undefined,
                           filter !== "all" && "ring-1 ring-primary/15"
                         )}
@@ -187,12 +189,12 @@ export function InventoryTable({
                         </td>
                         <td className="px-4 py-4 font-medium">
                           {item.tiktokStock === null ? (
-                            <span className="text-red-700 dark:text-red-200">Unavailable</span>
+                            <span className="text-rose-700 dark:text-rose-200">Unavailable</span>
                           ) : (
                             <span
                               className={
                                 mismatch || item.syncStatus === "delayed"
-                                  ? "text-red-700 dark:text-red-200"
+                                  ? "text-rose-700 dark:text-rose-200"
                                   : "text-emerald-700 dark:text-emerald-200"
                               }
                             >
@@ -200,7 +202,7 @@ export function InventoryTable({
                             </span>
                           )}
                           {mismatch ? (
-                            <p className="mt-1 text-xs text-red-700 dark:text-red-200">Mismatch: {Math.abs(item.shopifyStock - item.tiktokStock!)} units</p>
+                            <p className="mt-1 text-xs text-rose-700 dark:text-rose-200">Mismatch: {Math.abs(item.shopifyStock - item.tiktokStock!)} units</p>
                           ) : null}
                         </td>
                         <td className="px-4 py-4">

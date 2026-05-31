@@ -1,32 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useDashboardQuery } from "@/hooks/use-dashboard-query";
+import { useAlertActions } from "@/hooks/use-alert-actions";
 import { PageHeading } from "@/components/shared/page-heading";
 import { AlertsPanel } from "@/components/alerts/alerts-panel";
 import { ErrorBanner } from "@/components/shared/error-banner";
 
-import type { OperationalAlert } from "@/types/dashboard";
-
 export function AlertsView() {
   const { data, isLoading, isFetching, refetch } = useDashboardQuery();
-  const router = useRouter();
-
-  const handleAlertAction = (alert: OperationalAlert) => {
-    if (alert.actionLabel?.includes("Retry")) {
-      void refetch();
-      return;
-    }
-
-    if (alert.id === "low-stock") {
-      router.push("/inventory?risk=low");
-      return;
-    }
-
-    if (alert.id === "stock-mismatch") {
-      router.push("/inventory?filter=out_of_sync");
-    }
-  };
+  const handleAlertAction = useAlertActions(() => void refetch());
 
   return (
     <div className="space-y-6">

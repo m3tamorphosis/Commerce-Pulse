@@ -3,15 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
-  Bell,
   CalendarDays,
   Check,
   ChevronDown,
   Menu,
-  Moon,
   RefreshCcw,
-  Store,
-  Sun
+  Store
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SyncIndicator } from "@/components/shared/sync-indicator";
@@ -34,7 +31,7 @@ export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
   const alertCount = alertsRead ? 0 : (data?.alerts.length ?? 0);
 
   return (
-    <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-border/75 bg-background/90 shadow-sm shadow-slate-950/[0.03] backdrop-blur-xl dark:border-white/10 dark:bg-background/80 dark:shadow-black/20">
       <div className="flex min-h-16 items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-3">
           <Button className="lg:hidden" variant="ghost" size="icon" onClick={onOpenSidebar}>
@@ -42,7 +39,7 @@ export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
           </Button>
           <div className="relative hidden md:block">
             <button
-              className="flex h-9 max-w-60 items-center gap-2 rounded-lg border bg-card px-3 text-sm font-medium transition duration-150 ease-out hover:bg-muted active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="flex h-9 max-w-60 items-center gap-2 rounded-lg border border-border/85 bg-card/95 px-3 text-sm font-semibold shadow-sm transition duration-150 ease-out hover:border-primary/30 hover:bg-muted/70 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-white/10 dark:bg-card/90"
               aria-expanded={storeOpen}
               aria-haspopup="menu"
               onClick={() => {
@@ -84,7 +81,7 @@ export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
           </div>
           <div className="relative hidden sm:block">
             <button
-              className="flex h-9 items-center gap-2 rounded-lg border bg-card px-3 text-sm text-muted-foreground transition duration-150 ease-out hover:bg-muted hover:text-foreground active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="flex h-9 items-center gap-2 rounded-lg border border-border/85 bg-card/95 px-3 text-sm font-medium text-muted-foreground shadow-sm transition duration-150 ease-out hover:border-primary/30 hover:bg-muted/70 hover:text-foreground active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-white/10 dark:bg-card/90"
               aria-expanded={dateOpen}
               aria-haspopup="menu"
               onClick={() => {
@@ -147,7 +144,15 @@ export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
             title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={theme === "dark" ? "/branding/sun.svg" : "/branding/moon.svg"}
+              alt=""
+              aria-hidden="true"
+              className="h-4 w-4 shrink-0 object-contain"
+              width={16}
+              height={16}
+            />
           </Button>
           <div className="relative">
             <Button
@@ -155,15 +160,23 @@ export function TopNav({ onOpenSidebar }: { onOpenSidebar: () => void }) {
               size="icon"
               title="Notifications"
               aria-label="Open notifications"
-              onClick={() => {
-                setNotificationsOpen((value) => !value);
-                setAlertsRead(true);
-                setStoreOpen(false);
-                setDateOpen(false);
-                setProfileOpen(false);
-              }}
-            >
-              <Bell className="h-4 w-4" />
+            onClick={() => {
+              setNotificationsOpen((value) => !value);
+              setAlertsRead(true);
+              setStoreOpen(false);
+              setDateOpen(false);
+              setProfileOpen(false);
+            }}
+          >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/branding/alerts.svg"
+                alt=""
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0 object-contain"
+                width={16}
+                height={16}
+              />
               {alertCount > 0 ? (
                 <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
                   {alertCount}

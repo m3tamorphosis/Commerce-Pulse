@@ -17,11 +17,11 @@ export function AlertCard({
   return (
     <div
       className={cn(
-        "rounded-xl border bg-card p-4",
+        "rounded-xl border border-border/80 bg-card/95 p-4 shadow-sm transition duration-150 hover:border-primary/25 dark:border-white/10 dark:bg-card/90",
         alert.severity === "warning" &&
-          "border-l-4 border-red-200 border-l-red-400 bg-red-100/80 dark:border-red-300/40 dark:border-l-red-400 dark:bg-red-950/45",
+          "border-l-4 border-rose-300/80 border-l-rose-500 bg-rose-50/85 dark:border-rose-300/40 dark:border-l-rose-400 dark:bg-rose-950/55",
         alert.severity === "critical" &&
-          "border-l-4 border-rose-200 border-l-rose-500 bg-rose-100/80 dark:border-rose-300/40 dark:border-l-rose-400 dark:bg-rose-950/45"
+          "border-l-4 border-red-300 border-l-red-500 bg-red-50 dark:border-red-300/40 dark:border-l-red-400 dark:bg-red-500/16"
       )}
     >
       <div className="flex gap-3">
@@ -29,8 +29,8 @@ export function AlertCard({
           className={cn(
             "mt-0.5 h-5 w-5 shrink-0",
             alert.severity === "info" && "text-blue-600 dark:text-blue-300",
-            alert.severity === "warning" && "text-red-600 dark:text-red-300",
-            alert.severity === "critical" && "text-rose-600 dark:text-rose-300"
+            alert.severity === "warning" && "text-rose-600 dark:text-rose-200",
+            alert.severity === "critical" && "text-red-600 dark:text-red-200"
           )}
         />
         <div className="min-w-0 flex-1">

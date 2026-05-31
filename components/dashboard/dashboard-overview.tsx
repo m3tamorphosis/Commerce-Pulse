@@ -1,8 +1,8 @@
 "use client";
 
 import { RefreshCcw } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useDashboardQuery } from "@/hooks/use-dashboard-query";
+import { useAlertActions } from "@/hooks/use-alert-actions";
 import { Button } from "@/components/ui/button";
 import { ErrorBanner } from "@/components/shared/error-banner";
 import { PlatformStatusPill } from "@/components/shared/platform-status-pill";
@@ -12,33 +12,16 @@ import { InventoryTable } from "@/components/inventory/inventory-table";
 import { AlertsPanel } from "@/components/alerts/alerts-panel";
 import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
 import { AnalyticsInsights } from "@/components/dashboard/analytics-insights";
-import type { OperationalAlert } from "@/types/dashboard";
 
 export function DashboardOverview() {
   const { data, isLoading, isError, refetch, isFetching } = useDashboardQuery();
-  const router = useRouter();
-
-  const handleAlertAction = (alert: OperationalAlert) => {
-    if (alert.actionLabel?.includes("Retry")) {
-      void refetch();
-      return;
-    }
-
-    if (alert.id === "low-stock") {
-      router.push("/inventory?risk=low");
-      return;
-    }
-
-    if (alert.id === "stock-mismatch") {
-      router.push("/inventory?filter=out_of_sync");
-    }
-  };
+  const handleAlertAction = useAlertActions(() => void refetch());
 
   return (
     <div className="space-y-6">
       <section className="motion-safe:animate-section-in flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <p className="text-sm font-medium text-muted-foreground">
+          <p className="text-sm font-semibold text-primary">
             Unified Analytics Command Center for Shopify & TikTok Shop
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-normal text-foreground sm:text-4xl">

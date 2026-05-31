@@ -42,8 +42,8 @@ const config: Config = {
         }
       },
       boxShadow: {
-        soft: "0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.04)",
-        elevated: "0 14px 36px rgba(15, 23, 42, 0.10)"
+        soft: "0 1px 2px rgba(15, 23, 42, 0.05), 0 10px 24px rgba(15, 23, 42, 0.045)",
+        elevated: "0 16px 42px rgba(15, 23, 42, 0.16)"
       },
       keyframes: {
         "fade-in": {

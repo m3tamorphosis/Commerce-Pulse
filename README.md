@@ -264,14 +264,24 @@ npm run typecheck
 npm run build
 ```
 
-## Screenshots
+## Reviewer Notes
 
-Add screenshots here after running the app locally:
+This repository is intended to be reviewed as the structural HTML/React mockup deliverable. Run the app locally and open `http://localhost:3000` to inspect the command center UI.
 
-- Desktop dashboard overview
-- Mobile drawer and stacked metrics
-- Inventory mismatch state
-- TikTok delayed chart state
+Useful routes:
+
+- `/` - dashboard overview with KPI cards, platform status, charts, alerts, and inventory table
+- `/analytics` - platform comparison, chart controls, and reliability panels
+- `/inventory` - stock visibility with delayed and out-of-sync states
+- `/orders` - daily order breakdown by channel
+- `/alerts` - actionable platform and inventory notices
+- `/settings` - connection health and sync settings surface
+
+Useful API examples:
+
+- `/api/dashboard?store=manila&range=7d`
+- `/api/dashboard?store=manila&range=7d&scenario=failed`
+- `/api/dashboard?store=cebu&range=30d&scenario=delayed`
 
 ## Engineering Trade-offs
 

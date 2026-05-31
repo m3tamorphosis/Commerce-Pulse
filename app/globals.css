@@ -3,42 +3,42 @@
 @tailwind utilities;
 
 :root {
-  --background: 210 24% 97%;
-  --foreground: 222 50% 9%;
+  --background: 214 36% 98%;
+  --foreground: 222 47% 9%;
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
-  --muted: 210 20% 92%;
-  --muted-foreground: 216 22% 30%;
-  --border: 214 20% 82%;
-  --input: 214 20% 82%;
-  --ring: 217 91% 60%;
-  --primary: 221 83% 53%;
+  --muted: 214 31% 94%;
+  --muted-foreground: 216 20% 36%;
+  --border: 214 27% 86%;
+  --input: 214 27% 82%;
+  --ring: 215 90% 58%;
+  --primary: 215 86% 52%;
   --primary-foreground: 0 0% 100%;
-  --warning: 40 96% 58%;
-  --warning-foreground: 30 38% 16%;
-  --success: 160 64% 39%;
+  --warning: 2 82% 62%;
+  --warning-foreground: 0 74% 18%;
+  --success: 160 72% 36%;
   --success-foreground: 0 0% 100%;
-  --danger: 0 72% 51%;
+  --danger: 348 83% 48%;
   --danger-foreground: 0 0% 100%;
 }
 
 .dark {
-  --background: 222 45% 8%;
-  --foreground: 210 32% 98%;
-  --card: 222 34% 13%;
-  --card-foreground: 210 32% 98%;
-  --muted: 217 25% 19%;
-  --muted-foreground: 214 18% 78%;
-  --border: 217 22% 24%;
-  --input: 217 22% 24%;
-  --ring: 217 91% 65%;
-  --primary: 213 94% 68%;
+  --background: 222 45% 7%;
+  --foreground: 213 32% 96%;
+  --card: 222 34% 12%;
+  --card-foreground: 213 32% 96%;
+  --muted: 219 26% 17%;
+  --muted-foreground: 215 20% 74%;
+  --border: 219 23% 26%;
+  --input: 219 23% 28%;
+  --ring: 214 95% 68%;
+  --primary: 214 95% 66%;
   --primary-foreground: 0 0% 100%;
-  --warning: 40 90% 60%;
-  --warning-foreground: 30 35% 12%;
-  --success: 160 64% 44%;
+  --warning: 2 82% 68%;
+  --warning-foreground: 0 0% 100%;
+  --success: 160 70% 45%;
   --success-foreground: 0 0% 100%;
-  --danger: 0 70% 58%;
+  --danger: 348 85% 64%;
   --danger-foreground: 0 0% 100%;
 }
 
@@ -53,7 +53,7 @@ html {
 
 body {
   background:
-    linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted) / 0.42) 100%);
+    linear-gradient(180deg, hsl(214 45% 99%) 0%, hsl(var(--background)) 34%, hsl(214 33% 95%) 100%);
   color: hsl(var(--foreground));
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -68,7 +68,7 @@ body {
 
 .dark body {
   background:
-    linear-gradient(180deg, hsl(222 45% 8%) 0%, hsl(222 38% 10%) 52%, hsl(222 45% 8%) 100%);
+    linear-gradient(180deg, hsl(222 45% 7%) 0%, hsl(222 39% 9%) 48%, hsl(222 45% 7%) 100%);
 }
 
 ::selection {
@@ -107,6 +107,7 @@ select {
 .recharts-cartesian-axis-tick-value {
   fill: hsl(var(--muted-foreground));
   font-size: 12px;
+  font-weight: 500;
 }
 
 @media (prefers-reduced-motion: reduce) {

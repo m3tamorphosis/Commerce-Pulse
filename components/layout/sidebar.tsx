@@ -51,13 +51,13 @@ export function Sidebar({ collapsed, mobileOpen, onCollapse, onMobileClose }: Si
       ) : null}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex border-r bg-card transition-all duration-200",
+          "fixed inset-y-0 left-0 z-50 flex border-r border-border/75 bg-card/95 shadow-sm shadow-slate-950/[0.03] transition-all duration-200 dark:border-white/10 dark:bg-card/90 dark:shadow-black/20",
           collapsed ? "w-20" : "w-72",
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         <div className="flex w-full flex-col">
-          <div className="flex h-16 items-center justify-between border-b px-4">
+          <div className="flex h-16 items-center justify-between border-b border-border/75 px-4 dark:border-white/10">
             <div className="flex min-w-0 items-center gap-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl border bg-slate-950 text-white shadow-sm dark:bg-card">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -95,8 +95,8 @@ export function Sidebar({ collapsed, mobileOpen, onCollapse, onMobileClose }: Si
                 className={cn(
                   "flex h-10 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium transition duration-150 ease-out active:scale-[0.98]",
                   active
-                    ? "animate-nav-select bg-slate-950 text-white shadow-sm dark:bg-primary dark:text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    ? "animate-nav-select bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                    : "text-muted-foreground hover:bg-muted/75 hover:text-foreground",
                   collapsed && "justify-center px-0"
                 )}
                 title={collapsed ? item.label : undefined}
@@ -107,7 +107,7 @@ export function Sidebar({ collapsed, mobileOpen, onCollapse, onMobileClose }: Si
               );
             })}
           </nav>
-          <div className="border-t p-3">
+          <div className="border-t border-border/75 p-3 dark:border-white/10">
             <Button
               className={cn("hidden w-full lg:flex", collapsed && "px-0")}
               variant="secondary"

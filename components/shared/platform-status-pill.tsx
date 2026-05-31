@@ -17,20 +17,32 @@ export function PlatformStatusPill({ platform, health, isRetrying, onRetry }: Pl
   const syncTime = health.status === "healthy" ? health.lastSuccessfulSync : health.lastAttemptedSync;
 
   return (
-    <div className="flex min-w-0 items-center gap-2 rounded-lg border bg-card px-3 py-2 text-sm">
+    <div
+      className={cn(
+        "flex min-w-0 items-center gap-2 rounded-lg border bg-card/95 px-3 py-2 text-sm shadow-sm ring-1 ring-white/70 dark:bg-card/90 dark:ring-white/5",
+        health.status === "healthy" &&
+          (platform === "tiktok"
+            ? "border-blue-200/90 dark:border-blue-400/30"
+            : "border-emerald-200/90 dark:border-emerald-400/25"),
+        health.status !== "healthy" &&
+          "border-rose-300/75 bg-rose-50/70 dark:border-rose-300/40 dark:bg-rose-950/55"
+      )}
+    >
       <Icon
         className={cn(
           "h-4 w-4 shrink-0",
-          health.status === "healthy" && "text-emerald-600",
-          health.status === "delayed" && "text-red-600 dark:text-red-300",
-          health.status === "stale" && "text-red-600 dark:text-red-300",
-          health.status === "failed" && "text-rose-600"
+          health.status === "healthy" &&
+            (platform === "tiktok" ? "text-blue-600 dark:text-blue-300" : "text-emerald-600 dark:text-emerald-300"),
+          health.status === "delayed" && "text-rose-600 dark:text-rose-200",
+          health.status === "stale" && "text-rose-600 dark:text-rose-200",
+          health.status === "failed" && "text-red-600 dark:text-red-200"
         )}
       />
       <div className="min-w-0">
         <p className="truncate font-medium capitalize">{platform === "shopify" ? "Shopify" : "TikTok Shop"}</p>
         <p className="truncate text-xs font-medium text-muted-foreground">
-          {statusLabel(health.status)} · {syncLabel} {formatRelativeMinutes(syncTime)}
+          {statusLabel(health.status)} <span aria-hidden="true">&middot;</span> {syncLabel}{" "}
+          {formatRelativeMinutes(syncTime)}
         </p>
       </div>
       {canRetry ? (

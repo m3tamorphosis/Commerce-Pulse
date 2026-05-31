@@ -47,7 +47,7 @@ export function SalesAnalytics({
 
   const tiktokStatus = data?.platforms.tiktok.status;
   const tiktokDegraded = tiktokStatus && tiktokStatus !== "healthy";
-  const tiktokStroke = tiktokDegraded ? "#ef4444" : "#14b8a6";
+  const tiktokStroke = tiktokDegraded ? "#fb7185" : "#3b82f6";
   const formatter = metric === "revenue" ? formatCurrency : formatNumber;
 
   return (
@@ -56,12 +56,12 @@ export function SalesAnalytics({
       description="Revenue and order activity by platform with cached TikTok fallback support."
       action={
         <div className="flex flex-wrap gap-2">
-          <div className="flex rounded-lg border bg-muted p-1">
+          <div className="flex rounded-lg border border-border/80 bg-muted/70 p-1 shadow-sm dark:border-white/10 dark:bg-muted/55">
             {(["revenue", "orders"] as MetricMode[]).map((option) => (
               <button
                 key={option}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium capitalize transition duration-150 ease-out active:scale-[0.98] ${
-                  metric === option ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+                  metric === option ? "bg-card text-foreground shadow-sm dark:bg-card/90" : "text-muted-foreground hover:text-foreground"
                 }`}
                 onClick={() => setMetric(option)}
               >
@@ -69,12 +69,12 @@ export function SalesAnalytics({
               </button>
             ))}
           </div>
-          <div className="flex rounded-lg border bg-muted p-1">
+          <div className="flex rounded-lg border border-border/80 bg-muted/70 p-1 shadow-sm dark:border-white/10 dark:bg-muted/55">
             {(["area", "line"] as ChartMode[]).map((option) => (
               <button
                 key={option}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium capitalize transition duration-150 ease-out active:scale-[0.98] ${
-                  chartMode === option ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+                  chartMode === option ? "bg-card text-foreground shadow-sm dark:bg-card/90" : "text-muted-foreground hover:text-foreground"
                 }`}
                 onClick={() => setChartMode(option)}
               >
@@ -92,9 +92,9 @@ export function SalesAnalytics({
       {!isLoading && chartData?.length ? (
         <div className="space-y-4">
           {tiktokDegraded ? (
-            <div className="flex flex-col gap-3 rounded-lg border border-l-4 border-red-200 border-l-red-400 bg-red-100/80 p-3 text-sm text-red-950 dark:border-red-300/40 dark:border-l-red-400 dark:bg-red-950/55 dark:text-red-50 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 rounded-lg border border-l-4 border-rose-300/80 border-l-rose-500 bg-rose-50 p-3 text-sm text-rose-950 shadow-sm dark:border-rose-300/40 dark:border-l-rose-400 dark:bg-rose-950/55 dark:text-rose-50 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
-                <Clock3 className="h-4 w-4 text-red-600 dark:text-red-300" />
+                <Clock3 className="h-4 w-4 text-rose-600 dark:text-rose-200" />
                 <span>
                   TikTok data delayed. Last synced{" "}
                   {formatRelativeMinutes(data.platforms.tiktok.lastSuccessfulSync)}.
@@ -113,7 +113,7 @@ export function SalesAnalytics({
                 <AreaChart data={chartData} margin={{ top: 12, right: 18, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="shopifyFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.24} />
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.26} />
                       <stop offset="95%" stopColor="#10b981" stopOpacity={0.03} />
                     </linearGradient>
                     <linearGradient id="tiktokFill" x1="0" y1="0" x2="0" y2="1">
@@ -121,7 +121,7 @@ export function SalesAnalytics({
                       <stop offset="95%" stopColor={tiktokStroke} stopOpacity={0.03} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid stroke="currentColor" className="text-border" strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid stroke="currentColor" className="text-border/75" strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="date" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => formatter(Number(value))} width={70} />
                   <Tooltip
@@ -136,20 +136,20 @@ export function SalesAnalytics({
                     labelStyle={{ color: "hsl(var(--foreground))", fontWeight: 600 }}
                   />
                   <Legend />
-                  <Area type="monotone" dataKey="Shopify" stroke="#10b981" fill="url(#shopifyFill)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="Shopify" stroke="#10b981" fill="url(#shopifyFill)" strokeWidth={2.25} />
                   <Area
                     type="monotone"
                     dataKey="TikTok Shop"
                     stroke={tiktokStroke}
                     fill="url(#tiktokFill)"
-                    strokeWidth={2}
+                    strokeWidth={2.25}
                     strokeDasharray={tiktokDegraded ? "5 5" : undefined}
                     connectNulls
                   />
                 </AreaChart>
               ) : (
                 <LineChart data={chartData} margin={{ top: 12, right: 18, left: 0, bottom: 0 }}>
-                  <CartesianGrid stroke="currentColor" className="text-border" strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid stroke="currentColor" className="text-border/75" strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="date" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => formatter(Number(value))} width={70} />
                   <Tooltip
@@ -164,12 +164,12 @@ export function SalesAnalytics({
                     labelStyle={{ color: "hsl(var(--foreground))", fontWeight: 600 }}
                   />
                   <Legend />
-                  <Line type="monotone" dataKey="Shopify" stroke="#10b981" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="Shopify" stroke="#10b981" strokeWidth={2.25} dot={false} />
                   <Line
                     type="monotone"
                     dataKey="TikTok Shop"
                     stroke={tiktokStroke}
-                    strokeWidth={2}
+                    strokeWidth={2.25}
                     strokeDasharray={tiktokDegraded ? "5 5" : undefined}
                     dot={false}
                     connectNulls

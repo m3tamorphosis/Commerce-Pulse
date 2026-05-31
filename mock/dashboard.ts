@@ -31,7 +31,16 @@ const storeProfiles = {
       "Reusable Food Container",
       "Portable Fan",
       "Cotton Crew Socks",
-      "Slim Card Holder"
+      "Slim Card Holder",
+      "Cooling Towel Pack",
+      "Wireless Charging Pad",
+      "Stackable Shoe Box",
+      "Waterproof Phone Pouch",
+      "Kitchen Label Set",
+      "Travel Neck Pillow",
+      "Silicone Food Covers",
+      "LED Closet Light",
+      "Compact Umbrella"
     ]
   },
   luzon: {
@@ -55,7 +64,16 @@ const storeProfiles = {
       "Wooden Utensil Holder",
       "Candle Warmer Lamp",
       "Glass Pantry Jar Set",
-      "Sofa Throw Blanket"
+      "Sofa Throw Blanket",
+      "Bamboo Drawer Divider",
+      "Microfiber Mop Pads",
+      "Ceramic Soap Dispenser",
+      "Acrylic Storage Bin",
+      "Woven Tissue Holder",
+      "Cotton Oven Mitt Set",
+      "Wall Hook Rail",
+      "Foldable Drying Rack",
+      "Accent Table Mat"
     ]
   },
   cebu: {
@@ -79,7 +97,16 @@ const storeProfiles = {
       "Silk Square Scarf",
       "Everyday Hoop Earrings",
       "Denim Wrap Skirt",
-      "Resort Slide Sandals"
+      "Resort Slide Sandals",
+      "Crochet Beach Cover",
+      "Shell Charm Bracelet",
+      "Canvas Visor Cap",
+      "Straw Belt Bag",
+      "Pleated Lounge Pants",
+      "Pearl Hair Clip Set",
+      "Ribbed Tank Dress",
+      "Linen Wrap Skirt",
+      "Minimal Sunglasses"
     ]
   }
 };
@@ -182,7 +209,16 @@ const inventoryTemplates = [
   { sku: "KIT-FOD-480", shopify: 6, tiktok: 8, sync: "critical_stock", risk: "critical", minutes: 35 },
   { sku: "ELE-FAN-099", shopify: 73, tiktok: 73, sync: "synced", risk: "normal", minutes: 7 },
   { sku: "APP-SCK-015", shopify: 29, tiktok: 35, sync: "out_of_sync", risk: "normal", minutes: 41 },
-  { sku: "ACC-CRD-888", shopify: 13, tiktok: 13, sync: "low_stock", risk: "low", minutes: 12 }
+  { sku: "ACC-CRD-888", shopify: 13, tiktok: 13, sync: "low_stock", risk: "low", minutes: 12 },
+  { sku: "FIT-TWL-266", shopify: 45, tiktok: 45, sync: "synced", risk: "normal", minutes: 6 },
+  { sku: "ELE-CHG-572", shopify: 31, tiktok: 38, sync: "delayed", risk: "normal", minutes: 16 },
+  { sku: "ORG-SHO-184", shopify: 54, tiktok: 50, sync: "out_of_sync", risk: "normal", minutes: 29 },
+  { sku: "TRV-PCH-702", shopify: 19, tiktok: 19, sync: "low_stock", risk: "low", minutes: 14 },
+  { sku: "KIT-LBL-319", shopify: 88, tiktok: 88, sync: "synced", risk: "normal", minutes: 3 },
+  { sku: "TRV-NCK-447", shopify: 7, tiktok: 10, sync: "critical_stock", risk: "critical", minutes: 38 },
+  { sku: "KIT-CVR-228", shopify: 66, tiktok: 66, sync: "synced", risk: "normal", minutes: 9 },
+  { sku: "LED-LGT-511", shopify: 24, tiktok: 30, sync: "delayed", risk: "normal", minutes: 21 },
+  { sku: "ACC-UMB-690", shopify: 39, tiktok: 39, sync: "synced", risk: "normal", minutes: 11 }
 ] as const;
 
 export function getDashboardMock({ tiktokStatus, storeId, dateRangeId }: MockOptions): DashboardResponse {

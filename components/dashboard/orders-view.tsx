@@ -71,9 +71,9 @@ export function OrdersView() {
             <EmptyState title="No orders available" description="Order activity will appear once platform data is available." />
           ) : null}
           {!isLoading && rows.length ? (
-            <div className="overflow-x-auto rounded-xl border">
+            <div className="overflow-x-auto rounded-xl border border-border/80 shadow-sm dark:border-white/10">
               <table className="min-w-[640px] w-full border-collapse text-left text-sm">
-                <thead className="bg-muted/70 text-xs uppercase tracking-wide text-muted-foreground">
+                <thead className="bg-muted/75 text-xs uppercase tracking-wide text-muted-foreground dark:bg-muted/55">
                   <tr>
                     <th className="px-4 py-3 font-semibold">Day</th>
                     <th className="px-4 py-3 font-semibold">Shopify</th>
@@ -81,9 +81,9 @@ export function OrdersView() {
                     <th className="px-4 py-3 font-semibold">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y bg-card">
+                <tbody className="divide-y divide-border/70 bg-card dark:divide-white/10">
                   {rows.map((row) => (
-                    <tr key={row.date}>
+                    <tr key={row.date} className="transition-colors duration-150 hover:bg-muted/45 dark:hover:bg-muted/35">
                       <td className="px-4 py-4 font-medium">{row.date}</td>
                       <td className="px-4 py-4">{formatNumber(row.shopifyOrders)}</td>
                       <td className="px-4 py-4">

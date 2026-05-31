@@ -115,8 +115,19 @@ export function AnalyticsInsights({ data, isLoading }: AnalyticsInsightsProps) {
               <CardTitle>Platform Performance Breakdown</CardTitle>
             </div>
             <div className="flex items-center gap-2">
-              <StatusBadge status={data.platforms.shopify.status} />
-              <StatusBadge status={data.platforms.tiktok.status} />
+              <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800 shadow-sm dark:border-emerald-400/30 dark:bg-emerald-400/15 dark:text-emerald-100">
+                Shopify {statusLabel(data.platforms.shopify.status)}
+              </span>
+              <span
+                className={cn(
+                  "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium shadow-sm",
+                  data.platforms.tiktok.status === "healthy"
+                    ? "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-400/30 dark:bg-blue-500/20 dark:text-blue-100"
+                    : "border-rose-300/80 bg-rose-50 text-rose-800 dark:border-rose-300/40 dark:bg-rose-950/55 dark:text-rose-100"
+                )}
+              >
+                TikTok {statusLabel(data.platforms.tiktok.status)}
+              </span>
             </div>
           </div>
           <p className="text-sm text-muted-foreground">
@@ -125,45 +136,45 @@ export function AnalyticsInsights({ data, isLoading }: AnalyticsInsightsProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           {platformRows.map((row) => (
-            <div key={row.label} className="rounded-xl border bg-muted/35 p-4">
+            <div key={row.label} className="rounded-xl border border-border/70 bg-muted/35 p-4 shadow-sm dark:border-white/10 dark:bg-muted/25">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <p className="text-sm font-medium">{row.label}</p>
                 <p className="text-xs text-muted-foreground">Shopify / TikTok</p>
               </div>
               {typeof row.shopify === "number" ? (
                 <div className="space-y-2">
-                  <div className="flex h-2 overflow-hidden rounded-full bg-muted">
+                    <div className="flex h-2 overflow-hidden rounded-full bg-muted shadow-inner dark:bg-muted/70">
                     <div className="bg-emerald-500" style={{ width: `${row.shopify}%` }} />
                     <div
-                      className={tiktokDegraded ? "bg-red-400" : "bg-emerald-300"}
+                      className={tiktokDegraded ? "bg-rose-400" : "bg-blue-500"}
                       style={{ width: `${row.tiktok}%` }}
                     />
                   </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>{row.shopify}% Shopify</span>
-                    <span className={tiktokDegraded ? "text-red-700 dark:text-red-200" : "text-emerald-700 dark:text-emerald-200"}>
+                    <span className={tiktokDegraded ? "text-rose-700 dark:text-rose-200" : "text-blue-700 dark:text-blue-200"}>
                       {row.tiktok}% TikTok Shop
                     </span>
                   </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="rounded-lg border border-emerald-200/70 bg-card p-3 dark:border-emerald-400/20">
+                  <div className="rounded-lg border border-emerald-200/80 bg-card/95 p-3 shadow-sm dark:border-emerald-400/20 dark:bg-card/90">
                     <p className="text-xs text-muted-foreground">Shopify</p>
                     <p className="mt-1 font-semibold">{row.shopify}</p>
                   </div>
                   <div
                     className={cn(
-                      "rounded-lg border bg-card p-3",
+                      "rounded-lg border bg-card/95 p-3 shadow-sm dark:bg-card/90",
                       tiktokDegraded
-                        ? "border-red-200/80 dark:border-red-400/25"
-                        : "border-emerald-200/70 dark:border-emerald-400/20"
+                        ? "border-rose-300/80 dark:border-rose-400/25"
+                        : "border-blue-200/80 dark:border-blue-400/30"
                     )}
                   >
                     <p
                       className={cn(
                         "text-xs font-medium",
-                        tiktokDegraded ? "text-red-700 dark:text-red-200" : "text-emerald-700 dark:text-emerald-200"
+                        tiktokDegraded ? "text-rose-700 dark:text-rose-200" : "text-blue-700 dark:text-blue-200"
                       )}
                     >
                       TikTok Shop
@@ -192,10 +203,10 @@ export function AnalyticsInsights({ data, isLoading }: AnalyticsInsightsProps) {
             {topProducts.map((product, index) => (
               <div
                 key={product.id}
-                className="flex items-center justify-between gap-4 rounded-xl border bg-muted/35 p-3 transition hover:bg-muted/60"
+                className="flex items-center justify-between gap-4 rounded-xl border border-border/70 bg-muted/35 p-3 shadow-sm transition hover:bg-muted/60 dark:border-white/10 dark:bg-muted/25 dark:hover:bg-muted/40"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-card text-sm font-semibold">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border/65 bg-card/95 text-sm font-semibold shadow-sm dark:border-white/10 dark:bg-card/90">
                     {index + 1}
                   </div>
                   <div className="min-w-0">
@@ -207,21 +218,23 @@ export function AnalyticsInsights({ data, isLoading }: AnalyticsInsightsProps) {
                           product.platform === "Shopify"
                             ? "bg-emerald-500"
                             : tiktokDegraded
-                              ? "bg-red-400"
-                              : "bg-emerald-400"
+                              ? "bg-rose-400"
+                              : "bg-blue-500"
                         )}
                       />
                       <span
                         className={cn(
                           product.platform === "TikTok Shop" &&
                             (tiktokDegraded
-                              ? "text-red-700 dark:text-red-200"
-                              : "text-emerald-700 dark:text-emerald-200")
+                              ? "text-rose-700 dark:text-rose-200"
+                              : "text-blue-700 dark:text-blue-200")
                         )}
                       >
                         {product.platform}
                       </span>
-                      <span>· {formatNumber(product.orders)} orders</span>
+                      <span>
+                        <span aria-hidden="true">&middot;</span> {formatNumber(product.orders)} orders
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -230,7 +243,7 @@ export function AnalyticsInsights({ data, isLoading }: AnalyticsInsightsProps) {
                   <p
                     className={cn(
                       "text-sm font-medium",
-                      product.trend >= 0 ? "text-emerald-600" : "text-red-600 dark:text-red-300"
+                      product.trend >= 0 ? "text-emerald-600 dark:text-emerald-300" : "text-rose-600 dark:text-rose-200"
                     )}
                   >
                     {product.trend >= 0 ? "+" : ""}
@@ -256,16 +269,16 @@ export function AnalyticsInsights({ data, isLoading }: AnalyticsInsightsProps) {
         <CardContent className="grid gap-3 sm:grid-cols-2">
           {[
             { label: "Synced products", value: inventoryCounts.synced, icon: PackageCheck, tone: "green" },
-            { label: "Delayed products", value: inventoryCounts.delayed, icon: Clock3, tone: "red" },
-            { label: "Out of sync", value: inventoryCounts.outOfSync, icon: Activity, tone: "red" },
-            { label: "Low/Critical stock", value: inventoryCounts.lowOrCritical, icon: Boxes, tone: "red" }
+            { label: "Delayed products", value: inventoryCounts.delayed, icon: Clock3, tone: "rose" },
+            { label: "Out of sync", value: inventoryCounts.outOfSync, icon: Activity, tone: "rose" },
+            { label: "Low/Critical stock", value: inventoryCounts.lowOrCritical, icon: Boxes, tone: "rose" }
           ].map((item) => (
-            <div key={item.label} className="rounded-xl border bg-muted/35 p-4">
+            <div key={item.label} className="rounded-xl border border-border/70 bg-muted/35 p-4 shadow-sm dark:border-white/10 dark:bg-muted/25">
               <div className="flex items-center justify-between gap-3">
                 <item.icon
                   className={cn(
                     "h-5 w-5",
-                    item.tone === "green" ? "text-emerald-600" : "text-red-600 dark:text-red-300"
+                    item.tone === "green" ? "text-emerald-600 dark:text-emerald-300" : "text-rose-600 dark:text-rose-200"
                   )}
                 />
                 <span className="text-2xl font-semibold">{item.value}</span>
@@ -319,7 +332,7 @@ export function AnalyticsInsights({ data, isLoading }: AnalyticsInsightsProps) {
             status: PlatformStatus;
             meta: string;
           }>).map((row) => (
-            <div key={row.label} className="flex items-center justify-between gap-4 rounded-xl border bg-muted/35 p-4">
+            <div key={row.label} className="flex items-center justify-between gap-4 rounded-xl border border-border/70 bg-muted/35 p-4 shadow-sm dark:border-white/10 dark:bg-muted/25">
               <div>
                 <p className="text-sm font-medium">{row.label}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{row.meta}</p>
